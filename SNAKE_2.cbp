@@ -47,7 +47,6 @@
 			<Add library="dxguid" />
 			<Add directory="C:/Program Files (x86)/CodeBlocks/SDL-1.2.15/lib" />
 		</Linker>
-		<Unit filename="constantes.h" />
 		<Unit filename="jeu.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -58,6 +57,7 @@
 		<Unit filename="utilitaires.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="utilitaires.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

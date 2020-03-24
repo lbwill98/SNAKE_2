@@ -1,9 +1,18 @@
 # depslib dependency file v1.0
-1584791308 source:c:\users\william\c_projet\snake_2\jeu.c
+1585071835 source:c:\users\william\c_projet\snake_2\jeu.c
+	<stdlib.h>
+	<stdio.h>
+	<SDL/SDL.h>
+	<SDL/SDL_image.h>
+	<pthread.h>
+	<SDL/SDL_mixer.h>
+	<SDL/SDL_ttf.h>
+	"jeu.h"
+	"utilitaires.h"
 
 1584791485 source:c:\users\william\c_projet\snake_2\utilitaires.c
 
-1584877079 source:c:\users\william\c_projet\snake_2\main.c
+1585073153 source:c:\users\william\c_projet\snake_2\main.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -217,4 +226,13 @@
 
 1325738640 c:\program files (x86)\codeblocks\sdl-1.2.15\include\sdl\sdl_types.h
 	"SDL_stdinc.h"
+
+1584434607 c:\program files (x86)\codeblocks\sdl-1.2.15\include\sdl\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1585070532 c:\users\william\c_projet\snake_2\jeu.h
+
+1585070532 c:\users\william\c_projet\snake_2\utilitaires.h
 
