@@ -8,7 +8,7 @@ enum {VIDE,TETEV,CORPV};
 
 typedef struct
 {
-    int key[SDLK_LALT]
+    int key[SDLK_LALT];
 } Touches;
 
 typedef struct
@@ -18,6 +18,15 @@ typedef struct
     int colonnes;
 } Carte;
 
+typedef struct
+{
+    int length;
+    int head[3];
+    int **body;
+    int tail[3];
+} Snake;
+
 void initCarte(Carte *carte, char * fichier);
+void initSnake(Snake *snake, Carte *carte, int *head, int *tail);
 
 #endif // UTILITAIRES_H_INCLUDED

@@ -64,3 +64,15 @@ void initCarte(Carte *carte, char * fichier)
     }
     fclose(f);
 }
+
+void initSnake(Snake *snake, Carte *carte, int *head, int *tail)
+{
+    snake->length = 0;
+    snake->body = (int **)malloc(3*sizeof(int *));
+    for (int i=0; i < 3; i++)
+    {
+        snake->body[i] = (int *)malloc(carte->lignes*carte->colonnes*sizeof(int));
+        snake->head[i] = head[i];
+        snake->tail[i] = tail[i];
+    }
+}

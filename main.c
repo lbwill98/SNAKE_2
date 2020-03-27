@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     SDL_WM_SetIcon(IMG_Load("logo.png"),NULL);
     ecran = SDL_SetVideoMode(960,640,32,SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("SNAKE", NULL);
-    menu = IMG_Load("menu.png");
+    menu = IMG_Load("menu2.png");
     positionMenu.x=0;
     positionMenu.y=0;
 
@@ -46,6 +46,8 @@ int main(int argc, char *argv[])
 
             case SDLK_1:
                 jouer(ecran);
+
+                //SDL_Delay(2000);
                 //Mix_PlayMusic(musique, -1);
                 break;
             }
