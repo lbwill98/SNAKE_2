@@ -14,8 +14,7 @@ void initCarte(Carte *carte, char * fichier)
     char str[100];
     int i,j;
     char ch;
-    carte->lignes = 5;
-    carte->colonnes=5;
+    carte->lignes = 0;
     f = fopen(fichier,"r");
     if (f == NULL)
     {
@@ -29,11 +28,13 @@ void initCarte(Carte *carte, char * fichier)
         carte->lignes++;
     }
     fclose(f);
+
     carte->plateau = (int **)malloc(carte->lignes*sizeof(int *));
     for (i=0; i < carte->lignes; i++)
     {
         carte->plateau[i] = (int *)malloc(carte->colonnes*sizeof(int));
     }
+
     f = fopen(fichier,"r");
     i = 0;
     j = 0;
@@ -41,18 +42,23 @@ void initCarte(Carte *carte, char * fichier)
     {
         if (ch != '\n')
         {
-            if (ch == '#')
-            {
-                carte->plateau[i][j] = CORPV;
-            }
-            else
+            if (ch == ' ')
             {
                 carte->plateau[i][j] = VIDE;
             }
-            if (ch == '@')
+            else
             {
-                carte->plateau[i][j] = TETEV;
-                //sserpentV->positionTete =i,j
+                carte->plateau[i][j] = (int)ch-48;
+                if((int)ch==TETEV+48)
+                {
+                    carte->snakeV.head[1]=i;
+                    carte->snakeV.head[2]=j;
+                }
+                if((int)ch==QUEUEV+48)
+                {
+                    carte->snakeV.tail[1]=i;
+                    carte->snakeV.tail[2]=j;
+                }
             }
             j++;
             if (j == carte->colonnes)
@@ -63,16 +69,32 @@ void initCarte(Carte *carte, char * fichier)
         }
     }
     fclose(f);
-}
 
-void initSnake(Snake *snake, Carte *carte, int *head, int *tail)
-{
-    snake->length = 0;
-    snake->body = (int **)malloc(3*sizeof(int *));
-    for (int i=0; i < 3; i++)
+    carte->snakeV.length = 0;
+    carte->snakeV.body = (int **)malloc(3*sizeof(int *));
+    for (i=0; i < 3; i++)
     {
-        snake->body[i] = (int *)malloc(carte->lignes*carte->colonnes*sizeof(int));
-        snake->head[i] = head[i];
-        snake->tail[i] = tail[i];
+        carte->snakeV.body[i] = (int *)malloc(LENGTHMAX*sizeof(int));
+    }
+
+    if(carte->snakeV.head[1]==carte->snakeV.tail[1] && carte->snakeV.head[2]==carte->snakeV.tail[2]+1)
+    {
+        carte->snakeV.head[0]=DROITE;
+        carte->snakeV.tail[0]=DROITE;
+    }
+    if(carte->snakeV.head[1]==carte->snakeV.tail[1] && carte->snakeV.head[2]==carte->snakeV.tail[2]-1)
+    {
+        carte->snakeV.head[0]=GAUCHE;
+        carte->snakeV.tail[0]=GAUCHE;
+    }
+    if(carte->snakeV.head[1]==carte->snakeV.tail[1]+1 && carte->snakeV.head[2]==carte->snakeV.tail[2])
+    {
+        carte->snakeV.head[0]=BAS;
+        carte->snakeV.tail[0]=BAS;
+    }
+    if(carte->snakeV.head[1]==carte->snakeV.tail[1]-1 && carte->snakeV.head[2]==carte->snakeV.tail[2])
+    {
+        carte->snakeV.head[0]=HAUT;
+        carte->snakeV.tail[0]=HAUT;
     }
 }
