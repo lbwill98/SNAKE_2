@@ -9,18 +9,15 @@
 #include "jeu.h"
 
 
-
-SDL_Rect position;
-int continuerJeu;
-
 void jouer(SDL_Surface* ecran)
 {
     Carte carte;
     initCarte(&carte,"plateauB20X30.txt");
 
-
+    SDL_Rect position;
     Touches etat_clavier;
     memset(&etat_clavier,0,sizeof(etat_clavier));
+    SDL_Event event;
 
     SDL_Surface *teteV[4]= {NULL};
     SDL_Surface *teteActuelleV = NULL;
@@ -32,7 +29,8 @@ void jouer(SDL_Surface* ecran)
     SDL_Surface *queueActuelleV = NULL;
     SDL_Surface *fond = NULL;
     SDL_Surface *mur = NULL;
-    SDL_Event event;
+    SDL_Surface *fruit = NULL;
+
 
     teteV[HAUT] = IMG_Load("teteVH.png");
     teteV[BAS] = IMG_Load("teteVB.png");
@@ -58,66 +56,66 @@ void jouer(SDL_Surface* ecran)
 
     fond = IMG_Load("plateauBlanc2030.png");
     mur = IMG_Load("mur.png");
+    fruit = IMG_Load("fruitOr.png");
 
-    continuerJeu = 1;
-    while(continuerJeu==1)
+    while(carte.jouer==1)
     {
 
-        updateClavier(&etat_clavier);
+         updateClavier(&etat_clavier);
 
-        if(etat_clavier.key[SDLK_UP])
+         if(etat_clavier.key[SDLK_UP])
+         {
+             carte.snakeV.head[0] = HAUT;
+         }
+         if(etat_clavier.key[SDLK_DOWN])
+         {
+             carte.snakeV.head[0] = BAS;
+         }
+         if(etat_clavier.key[SDLK_LEFT])
+         {
+             carte.snakeV.head[0] = GAUCHE;
+         }
+         if(etat_clavier.key[SDLK_RIGHT])
+         {
+             carte.snakeV.head[0] = DROITE;
+         }
+         if(etat_clavier.key[SDLK_ESCAPE])
+         {
+             carte.jouer = 0;
+         }
+/*
+        SDL_WaitEvent(&event);
+        switch(event.type)
         {
+        case SDL_QUIT:
+            carte.jouer=0;
+            break;
+
+        case SDL_KEYDOWN:
+            switch(event.key.keysym.sym)
+            {
+            case SDLK_ESCAPE:
+                carte.jouer = 0;
+                break;
+
+            case SDLK_UP:
             carte.snakeV.head[0] = HAUT;
+            break;
+
+            case SDLK_DOWN:
+                carte.snakeV.head[0] = BAS;
+                break;
+
+            case SDLK_LEFT:
+                carte.snakeV.head[0] = GAUCHE;
+                break;
+
+            case SDLK_RIGHT:
+                carte.snakeV.head[0] = DROITE;
+                break;
+            }
         }
-        if(etat_clavier.key[SDLK_DOWN])
-        {
-            carte.snakeV.head[0] = BAS;
-        }
-        if(etat_clavier.key[SDLK_LEFT])
-        {
-            carte.snakeV.head[0] = GAUCHE;
-        }
-        if(etat_clavier.key[SDLK_RIGHT])
-        {
-            carte.snakeV.head[0] = DROITE;
-        }
-        if(etat_clavier.key[SDLK_ESCAPE])
-        {
-            continuerJeu = 0;
-        }
-
-        /*      SDL_WaitEvent(&event);
-              switch(event.type)
-              {
-              case SDL_QUIT:
-                  continuerJeu=0;
-                  break;
-
-              case SDL_KEYDOWN:
-                  switch(event.key.keysym.sym)
-                  {
-                  case SDLK_ESCAPE:
-                      continuerJeu = 0;
-                      break;
-
-                  case SDLK_UP:
-                      carte.snakeV.head[0] = HAUT;
-                      break;
-
-                  case SDLK_DOWN:
-                      carte.snakeV.head[0] = BAS;
-                      break;
-
-                  case SDLK_LEFT:
-                      carte.snakeV.head[0] = GAUCHE;
-                      break;
-
-                  case SDLK_RIGHT:
-                      carte.snakeV.head[0] = DROITE;
-                      break;
-                  }
-              }
-        */
+*/
         teteActuelleV = teteV[carte.snakeV.head[0]];
         deplacer(&carte);
         queueActuelleV = queueV[carte.snakeV.tail[0]];
@@ -142,6 +140,10 @@ void jouer(SDL_Surface* ecran)
                     SDL_BlitSurface(mur,NULL,ecran,&position);
                     break;
 
+                case FRUIT:
+                    SDL_BlitSurface(fruit,NULL,ecran,&position);
+                    break;
+
                 case TETEV:
                     SDL_BlitSurface(teteActuelleV,NULL,ecran,&position);
                     break;
@@ -161,8 +163,8 @@ void jouer(SDL_Surface* ecran)
             }
         }
         SDL_Flip(ecran);
-        SDL_Delay(100);
-        //continuerJeu =0;
+        SDL_Delay(200);
+        //carte.jouer=0;
     }
 
     for(int i=0; i<4; i++)
@@ -191,9 +193,13 @@ void deplacer(Carte *carte)// ATTENTION BUG AVEC GAUCHE ET DROITE POUR LA TP AVE
         {
         case HAUT:
             carte->snakeV.tail[0]=HAUT;
+            if(carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]]==FRUIT)
+            {
+
+            }
             if(carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]]!=VIDE)
             {
-                //continuerJeu =0;
+                //carte.jouer =0;
                 break;
             }
             carte->snakeV.head[1]--;
@@ -204,7 +210,7 @@ void deplacer(Carte *carte)// ATTENTION BUG AVEC GAUCHE ET DROITE POUR LA TP AVE
             carte->snakeV.tail[0]=BAS;
             if(carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]]!=VIDE)
             {
-                //continuerJeu =0;
+                //carte.jouer =0;
                 break;
             }
             carte->snakeV.head[1]++;
@@ -215,7 +221,7 @@ void deplacer(Carte *carte)// ATTENTION BUG AVEC GAUCHE ET DROITE POUR LA TP AVE
             carte->snakeV.tail[0]=GAUCHE;
             if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1]!=VIDE)
             {
-                //continuerJeu =0;
+                //carte.jouer =0;
                 break;
             }
             carte->snakeV.head[2]--;
@@ -226,7 +232,7 @@ void deplacer(Carte *carte)// ATTENTION BUG AVEC GAUCHE ET DROITE POUR LA TP AVE
             carte->snakeV.tail[0]=DROITE;
             if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1]!=VIDE)
             {
-                //continuerJeu =0;
+                //carte.jouer =0;
                 break;
             }
             carte->snakeV.head[2]++;

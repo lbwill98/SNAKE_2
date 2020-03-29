@@ -10,7 +10,7 @@
 #define LENGTHMAX 598 //taille maximale 30x20-2
 
 enum {HAUT,BAS,GAUCHE,DROITE};
-enum {VIDE,MUR,TETEV,CORPV,VIRAGEV,QUEUEV};
+enum {VIDE,MUR,TETEV,CORPV,VIRAGEV,QUEUEV,TETER,CORPR,VIRAGER,QUEUER,FRUIT};
 
 typedef struct
 {
@@ -27,9 +27,11 @@ typedef struct
 
 typedef struct
 {
+    int jouer;
     int **plateau;
     int lignes;
     int colonnes;
+    int fruit;
     Snake snakeV;
 } Carte;
 
@@ -38,5 +40,7 @@ typedef struct
 
 
 void initCarte(Carte *carte, char * fichier);
+void placer_fruit(Carte *carte);
+int my_rand (int maximum);
 
 #endif // UTILITAIRES_H_INCLUDED

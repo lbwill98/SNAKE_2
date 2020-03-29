@@ -1,6 +1,13 @@
 #ifndef JEU_H_INCLUDED
 #define JEU_H_INCLUDED
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <windows.h>
+#include <conio.h>
 #include "utilitaires.h"
 
 

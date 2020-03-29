@@ -14,7 +14,9 @@ void initCarte(Carte *carte, char * fichier)
     char str[100];
     int i,j;
     char ch;
+    carte->jouer = 1;
     carte->lignes = 0;
+    carte->fruit = 0;
     f = fopen(fichier,"r");
     if (f == NULL)
     {
@@ -59,6 +61,10 @@ void initCarte(Carte *carte, char * fichier)
                     carte->snakeV.tail[1]=i;
                     carte->snakeV.tail[2]=j;
                 }
+                if((int)ch==FRUIT+48)
+                {
+                    carte->fruit++;
+                }
             }
             j++;
             if (j == carte->colonnes)
@@ -97,4 +103,41 @@ void initCarte(Carte *carte, char * fichier)
         carte->snakeV.head[0]=HAUT;
         carte->snakeV.tail[0]=HAUT;
     }
+    if(carte->fruit==0)//si pas de fruit dans le fichier
+    {
+        placer_fruit(carte);
+    }
+}
+
+void placer_fruit(Carte *carte)
+{
+    int placer = 0;
+    while(!placer)
+    {
+        int i = my_rand(carte->lignes);
+        int j = my_rand(carte->colonnes);
+        if(carte->plateau[i][j]==VIDE)
+        {
+            carte->plateau[i][j] = FRUIT;
+            carte->fruit++;
+            placer = 1;
+        }
+    }
+}
+
+int my_rand (int maximum)
+{
+    int res;
+    int i;
+    for (i = 0; i<2; i++)
+    {
+        static int first = 0;
+        if (first == 0)
+        {
+            srand (time (NULL));
+            first = 1;
+        }
+        res =(int)(rand()/(double)RAND_MAX*(maximum));
+    }
+    return (res);
 }
