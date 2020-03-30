@@ -57,22 +57,22 @@ void jouer(SDL_Surface* ecran)
 
     while(carte.jouer==1)
     {
-
+        carte.snakeV.head[3]=carte.snakeV.head[0];
         updateClavier(&etat_clavier);
 
-        if(etat_clavier.key[SDLK_UP])
+        if(etat_clavier.key[SDLK_UP] && carte.snakeV.head[0] != BAS)
         {
             carte.snakeV.head[0] = HAUT;
         }
-        if(etat_clavier.key[SDLK_DOWN])
+        if(etat_clavier.key[SDLK_DOWN]  && carte.snakeV.head[0] != HAUT)
         {
             carte.snakeV.head[0] = BAS;
         }
-        if(etat_clavier.key[SDLK_LEFT])
+        if(etat_clavier.key[SDLK_LEFT] && carte.snakeV.head[0] != DROITE)
         {
             carte.snakeV.head[0] = GAUCHE;
         }
-        if(etat_clavier.key[SDLK_RIGHT])
+        if(etat_clavier.key[SDLK_RIGHT] && carte.snakeV.head[0] != GAUCHE)
         {
             carte.snakeV.head[0] = DROITE;
         }
@@ -167,7 +167,7 @@ void jouer(SDL_Surface* ecran)
             placer_fruit(&carte);
         }
         SDL_Flip(ecran);
-        SDL_Delay(200);
+        SDL_Delay(100);
         //carte.jouer=0;
     }
 
@@ -292,17 +292,16 @@ void updateClavier(Touches *etat_clavier)
 void ajouterCorp(Carte *carte)
 {
     carte->fruit--;
-    int directionPrecedente = carte->snakeV.tail[0];
+    /*int directionPrecedente = carte->snakeV.tail[0];
     if(carte->snakeV.length!=0)
     {
         directionPrecedente = carte->snakeV.body[0][carte->snakeV.length-1];
-    }
-    carte->snakeV.body[1][carte->snakeV.length]=carte->snakeV.head[1];
-
+    }*/
     carte->snakeV.length++;
-    directionPremierCorp(carte,directionPrecedente);
+    directionPremierCorp(carte,carte->snakeV.head[3]);
+    carte->snakeV.body[1][carte->snakeV.length-1]=carte->snakeV.head[1];
     carte->snakeV.body[2][carte->snakeV.length-1]=carte->snakeV.head[2];
-    carte->plateau[carte->snakeV.body[1][carte->snakeV.length-1]][carte->snakeV.body[2][carte->snakeV.length-1]]=CORPV;
+    carte->plateau[carte->snakeV.body[1][carte->snakeV.length-1]][carte->snakeV.body[2][carte->snakeV.length-1 ]]=CORPV;
 
 
 }
@@ -319,7 +318,7 @@ void avancerCorp(Carte *carte)
     {
         if(carte->snakeV.body[0][carte->snakeV.length-1]!=carte->snakeV.head[0])
         {
-            directionPremierCorp(carte, carte->snakeV.body[0][carte->snakeV.length-1]);
+            directionPremierCorp(carte,carte->snakeV.head[3]);// carte->snakeV.body[0][carte->snakeV.length-1]);
         }
         carte->snakeV.body[1][carte->snakeV.length-1]=carte->snakeV.head[1];
         carte->snakeV.body[2][carte->snakeV.length-1]=carte->snakeV.head[2];
@@ -347,8 +346,7 @@ void avancerQueue(Carte *carte)
 }
 
 void directionPremierCorp(Carte *carte, int directionPrecedente)
-{
-    switch(carte->snakeV.head[0])
+{switch(carte->snakeV.head[0])
     {
     case HAUT:
         switch(directionPrecedente)
@@ -362,24 +360,24 @@ void directionPremierCorp(Carte *carte, int directionPrecedente)
         case DROITE:
             carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEHG;
             break;
-        case VIRAGEHG:
-            if(carte->snakeV.body[1][carte->snakeV.length-1]==carte->snakeV.head[1])
+        /*case VIRAGEHG:
+            if(carte->snakeV.body[2][carte->snakeV.length-1]==carte->snakeV.head[2])
+            {
+                carte->snakeV.body[0][carte->snakeV.length-1]=HAUT;
+            }
+            else
             {
                 carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEHD;
             }
-            else
-            {
-                carte->snakeV.body[0][carte->snakeV.length-1]=HAUT;
-            }
             break;
         case VIRAGEHD:
-            if(carte->snakeV.body[1][carte->snakeV.length-1]==carte->snakeV.head[1])
+            if(carte->snakeV.body[2][carte->snakeV.length-1]==carte->snakeV.head[2])
             {
-                carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEHG;
+                carte->snakeV.body[0][carte->snakeV.length-1]=HAUT;
             }
             else
             {
-                carte->snakeV.body[0][carte->snakeV.length-1]=HAUT;
+                carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEHG;
             }
             break;
         case VIRAGEBG:
@@ -388,7 +386,7 @@ void directionPremierCorp(Carte *carte, int directionPrecedente)
         case VIRAGEBD:
             carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEHG;
             break;
-        }
+ */       }
         break;
     case BAS:
         switch(directionPrecedente)
@@ -402,33 +400,33 @@ void directionPremierCorp(Carte *carte, int directionPrecedente)
         case DROITE:
             carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEBG;
             break;
-        case VIRAGEHG:
+       /* case VIRAGEHG:
             carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEBD;
             break;
         case VIRAGEHD:
             carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEBG;
             break;
         case VIRAGEBG:
-            if(carte->snakeV.body[1][carte->snakeV.length-1]==carte->snakeV.head[1])
+            if(carte->snakeV.body[2][carte->snakeV.length-1]==carte->snakeV.head[2])
+            {
+                carte->snakeV.body[0][carte->snakeV.length-1]=BAS;
+            }
+            else
             {
                 carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEBD;
             }
-            else
+            break;
+        case VIRAGEBD:
+            if(carte->snakeV.body[2][carte->snakeV.length-1]==carte->snakeV.head[2])
             {
                 carte->snakeV.body[0][carte->snakeV.length-1]=BAS;
             }
-            break;
-        case VIRAGEBD:
-            if(carte->snakeV.body[1][carte->snakeV.length-1]==carte->snakeV.head[1])
+            else
             {
                 carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEBG;
             }
-            else
-            {
-                carte->snakeV.body[0][carte->snakeV.length-1]=BAS;
-            }
             break;
-        }
+  */      }
         break;
     case GAUCHE:
         switch(directionPrecedente)
@@ -442,7 +440,7 @@ void directionPremierCorp(Carte *carte, int directionPrecedente)
         case GAUCHE:
             carte->snakeV.body[0][carte->snakeV.length-1]=GAUCHE;
             break;
-        case VIRAGEHG:
+        /*case VIRAGEHG:
             if(carte->snakeV.body[1][carte->snakeV.length-1]==carte->snakeV.head[1])
             {
                 carte->snakeV.body[0][carte->snakeV.length-1]=GAUCHE;
@@ -468,7 +466,7 @@ void directionPremierCorp(Carte *carte, int directionPrecedente)
         case VIRAGEBD:
             carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEHG;
             break;
-        }
+    */    }
         break;
     case DROITE:
         switch(directionPrecedente)
@@ -482,7 +480,7 @@ void directionPremierCorp(Carte *carte, int directionPrecedente)
         case DROITE:
             carte->snakeV.body[0][carte->snakeV.length-1]=DROITE;
             break;
-        case VIRAGEHG:
+        /*case VIRAGEHG:
             carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEBD;
             break;
         case VIRAGEHD:
@@ -508,7 +506,7 @@ void directionPremierCorp(Carte *carte, int directionPrecedente)
                 carte->snakeV.body[0][carte->snakeV.length-1]=VIRAGEHD;
             }
             break;
-        }
+ */       }
         break;
     }
 }

@@ -20,7 +20,7 @@ typedef struct
 typedef struct
 {
     int length;
-    int head[3];
+    int head[4];
     int **body;
     int tail[3];
 } Snake;
