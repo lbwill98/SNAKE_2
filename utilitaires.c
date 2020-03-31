@@ -61,6 +61,16 @@ void initCarte(Carte *carte, char * fichier)
                     carte->snakeV.tail[1]=i;
                     carte->snakeV.tail[2]=j;
                 }
+                if((int)ch==TETER+48)
+                {
+                    carte->snakeR.head[1]=i;
+                    carte->snakeR.head[2]=j;
+                }
+                if((int)ch==QUEUER+48)
+                {
+                    carte->snakeR.tail[1]=i;
+                    carte->snakeR.tail[2]=j;
+                }
                 if((int)ch==FRUIT+48)
                 {
                     carte->fruit++;
@@ -77,10 +87,17 @@ void initCarte(Carte *carte, char * fichier)
     fclose(f);
 
     carte->snakeV.length = 0;
+    carte->snakeR.length = 0;
+
     carte->snakeV.body = (int **)malloc(3*sizeof(int *));
     for (i=0; i < 3; i++)
     {
         carte->snakeV.body[i] = (int *)malloc(LENGTHMAX*sizeof(int));
+    }
+    carte->snakeR.body = (int **)malloc(3*sizeof(int *));
+    for (i=0; i < 3; i++)
+    {
+        carte->snakeR.body[i] = (int *)malloc(LENGTHMAX*sizeof(int));
     }
 
     if(carte->snakeV.head[1]==carte->snakeV.tail[1] && carte->snakeV.head[2]==carte->snakeV.tail[2]+1)
@@ -103,7 +120,30 @@ void initCarte(Carte *carte, char * fichier)
         carte->snakeV.head[0]=HAUT;
         carte->snakeV.tail[0]=HAUT;
     }
+    if(carte->snakeR.head[1]==carte->snakeR.tail[1] && carte->snakeR.head[2]==carte->snakeR.tail[2]+1)
+    {
+        carte->snakeR.head[0]=DROITE;
+        carte->snakeR.tail[0]=DROITE;
+    }
+    if(carte->snakeR.head[1]==carte->snakeR.tail[1] && carte->snakeR.head[2]==carte->snakeR.tail[2]-1)
+    {
+        carte->snakeR.head[0]=GAUCHE;
+        carte->snakeR.tail[0]=GAUCHE;
+    }
+    if(carte->snakeR.head[1]==carte->snakeR.tail[1]+1 && carte->snakeR.head[2]==carte->snakeR.tail[2])
+    {
+        carte->snakeR.head[0]=BAS;
+        carte->snakeR.tail[0]=BAS;
+    }
+    if(carte->snakeR.head[1]==carte->snakeR.tail[1]-1 && carte->snakeR.head[2]==carte->snakeR.tail[2])
+    {
+        carte->snakeR.head[0]=HAUT;
+        carte->snakeR.tail[0]=HAUT;
+    }
+
     carte->snakeV.head[3]=carte->snakeV.head[0];
+    carte->snakeR.head[3]=carte->snakeR.head[0];
+
     if(carte->fruit==0)//si pas de fruit dans le fichier
     {
         placer_fruit(carte);

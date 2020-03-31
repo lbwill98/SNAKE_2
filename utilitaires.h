@@ -33,6 +33,7 @@ typedef struct
     int colonnes;
     int fruit;
     Snake snakeV;
+    Snake snakeR;
 } Carte;
 
 

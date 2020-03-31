@@ -13,12 +13,20 @@
 
 
 void updateClavier(Touches *etat_clavier);
+
 void jouer(SDL_Surface* ecran);
-void deplacer(Carte *carte);
-void ajouterCorp(Carte *carte);
-void avancerCorp(Carte *carte);
-void avancerQueue(Carte *carte);
-void directionPremierCorp(Carte *carte);
-void directionQueue(Carte *carte, int directionPrecedente);
+void deplacerV(Carte *carte);
+void ajouterCorpV(Carte *carte);
+void avancerCorpV(Carte *carte);
+void avancerQueueV(Carte *carte);
+void directionPremierCorpV(Carte *carte);
+void directionQueueV(Carte *carte, int directionPrecedente);
+
+void deplacerR(Carte *carte);
+void ajouterCorpR(Carte *carte);
+void avancerCorpR(Carte *carte);
+void avancerQueueR(Carte *carte);
+void directionPremierCorpR(Carte *carte);
+void directionQueueR(Carte *carte, int directionPrecedente);
 
 #endif // JEU_H_INCLUDED

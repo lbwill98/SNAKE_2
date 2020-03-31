@@ -12,7 +12,7 @@
 void jouer(SDL_Surface* ecran)
 {
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt");
+    initCarte(&carte,"I_LOVE_ENSEM.txt");
 
     SDL_Rect position;
     Touches etat_clavier;
@@ -23,6 +23,7 @@ void jouer(SDL_Surface* ecran)
     TTF_Font *police = TTF_OpenFont("BKANT.ttf",24);
     SDL_Color couleurNoir = {0,0,0}, couleurOr = {255,215,0};
     char texteScoreV[20] = "";
+    char texteScoreR[20] = "";
 
     SDL_Surface *teteV[4]= {NULL};
     SDL_Surface *teteActuelleV = NULL;
@@ -30,10 +31,17 @@ void jouer(SDL_Surface* ecran)
     SDL_Surface *corpActuelleV =  NULL;
     SDL_Surface *queueV[4] = {NULL};
     SDL_Surface *queueActuelleV = NULL;
+    SDL_Surface *teteR[4]= {NULL};
+    SDL_Surface *teteActuelleR = NULL;
+    SDL_Surface *corpR[8] = {NULL};
+    SDL_Surface *corpActuelleR =  NULL;
+    SDL_Surface *queueR[4] = {NULL};
+    SDL_Surface *queueActuelleR = NULL;
     SDL_Surface *fond = NULL;
     SDL_Surface *mur = NULL;
     SDL_Surface *fruit = NULL;
     SDL_Surface *scoreV = NULL;
+    SDL_Surface *scoreR = NULL;
 
 
     teteV[HAUT] = IMG_Load("teteVH.png");
@@ -57,6 +65,27 @@ void jouer(SDL_Surface* ecran)
     queueV[DROITE] = IMG_Load("queueVD.png");
     queueActuelleV = queueV[carte.snakeV.tail[0]];
 
+    teteR[HAUT] = IMG_Load("teteRH.png");
+    teteR[BAS] = IMG_Load("teteRB.png");
+    teteR[GAUCHE] = IMG_Load("teteRG.png");
+    teteR[DROITE] = IMG_Load("teteRD.png");
+    teteActuelleR = teteR[carte.snakeR.head[0]];
+
+    corpR[HAUT] = IMG_Load("corpRH.png");
+    corpR[BAS] = IMG_Load("corpRB.png");
+    corpR[GAUCHE] = IMG_Load("corpRG.png");
+    corpR[DROITE] = IMG_Load("corpRD.png");
+    corpR[VIRAGEHG] = IMG_Load("virageRHG.png");
+    corpR[VIRAGEHD] = IMG_Load("virageRHD.png");
+    corpR[VIRAGEBG] = IMG_Load("virageRBG.png");
+    corpR[VIRAGEBD] = IMG_Load("virageRBD.png");
+
+    queueR[HAUT] = IMG_Load("queueRH.png");
+    queueR[BAS] = IMG_Load("queueRB.png");
+    queueR[GAUCHE] = IMG_Load("queueRG.png");
+    queueR[DROITE] = IMG_Load("queueRD.png");
+    queueActuelleR = queueR[carte.snakeR.tail[0]];
+
     fond = IMG_Load("plateauBlanc2030.png");
     mur = IMG_Load("mur.png");
     fruit = IMG_Load("fruitOr.png");
@@ -64,28 +93,46 @@ void jouer(SDL_Surface* ecran)
     while(carte.jouer==1)
     {
         carte.snakeV.head[3]=carte.snakeV.head[0];
+        carte.snakeR.head[3]=carte.snakeR.head[0];
         updateClavier(&etat_clavier);
 
         if(etat_clavier.key[SDLK_ESCAPE])
         {
             carte.jouer = 0;
         }
-        else if(etat_clavier.key[SDLK_UP] && carte.snakeV.head[0] != BAS)
+        else if(etat_clavier.key[SDLK_UP] && (carte.plateau[carte.snakeV.head[1]-1][carte.snakeV.head[2]] ==VIDE || carte.plateau[carte.snakeV.head[1]-1][carte.snakeV.head[2]] ==FRUIT))
         {
             carte.snakeV.head[0] = HAUT;
         }
-        else if(etat_clavier.key[SDLK_DOWN]  && carte.snakeV.head[0] != HAUT)
+        else if(etat_clavier.key[SDLK_DOWN]  &&  (carte.plateau[carte.snakeV.head[1]+1][carte.snakeV.head[2]] ==VIDE || carte.plateau[carte.snakeV.head[1]+1][carte.snakeV.head[2]] ==FRUIT))
         {
             carte.snakeV.head[0] = BAS;
         }
-        else if(etat_clavier.key[SDLK_LEFT] && carte.snakeV.head[0] != DROITE)
+        else if(etat_clavier.key[SDLK_LEFT] && (carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]-1] == VIDE || carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]-1] == FRUIT))
         {
             carte.snakeV.head[0] = GAUCHE;
         }
-        else if(etat_clavier.key[SDLK_RIGHT] && carte.snakeV.head[0] != GAUCHE)
+        else if(etat_clavier.key[SDLK_RIGHT] && (carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]+1] == VIDE || carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]+1] == FRUIT))
         {
             carte.snakeV.head[0] = DROITE;
         }
+        else if(etat_clavier.key[SDLK_e] && (carte.plateau[carte.snakeR.head[1]-1][carte.snakeR.head[2]] == VIDE || carte.plateau[carte.snakeR.head[1]-1][carte.snakeR.head[2]] == FRUIT))
+        {
+            carte.snakeR.head[0] = HAUT;
+        }
+        else if(etat_clavier.key[SDLK_d]  && (carte.plateau[carte.snakeR.head[1]+1][carte.snakeR.head[2]] == VIDE || carte.plateau[carte.snakeR.head[1]+1][carte.snakeR.head[2]] == FRUIT))
+        {
+            carte.snakeR.head[0] = BAS;
+        }
+        else if(etat_clavier.key[SDLK_s] && (carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]-1] == VIDE || carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]-1] == FRUIT))
+        {
+            carte.snakeR.head[0] = GAUCHE;
+        }
+        else if(etat_clavier.key[SDLK_f] && (carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]+1] == VIDE || carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]+1] == FRUIT))
+        {
+            carte.snakeR.head[0] = DROITE;
+        }
+
         /*
                 SDL_WaitEvent(&event);
                 switch(event.type)
@@ -120,8 +167,11 @@ void jouer(SDL_Surface* ecran)
                 }
         */
         teteActuelleV = teteV[carte.snakeV.head[0]];
-        deplacer(&carte);
+        deplacerV(&carte);
         queueActuelleV = queueV[carte.snakeV.tail[0]];
+        teteActuelleR = teteR[carte.snakeR.head[0]];
+        deplacerR(&carte);
+        queueActuelleR = queueR[carte.snakeR.tail[0]];
 
         if(carte.fruit==0)
         {
@@ -170,18 +220,42 @@ void jouer(SDL_Surface* ecran)
                 case QUEUEV:
                     SDL_BlitSurface(queueActuelleV,NULL,ecran,&position);
                     break;
+
+                case TETER:
+                    SDL_BlitSurface(teteActuelleR,NULL,ecran,&position);
+                    break;
+
+                case CORPR:
+                    for(int k=0; k<carte.snakeR.length; k++)
+                    {
+                        if(carte.snakeR.body[1][k]==i && carte.snakeR.body[2][k]==j)
+                        {
+                            corpActuelleR=corpR[carte.snakeR.body[0][k]];
+                            SDL_BlitSurface(corpActuelleR,NULL,ecran,&position);
+                            break;
+                        }
+                    }
+                    break;
+                case QUEUER:
+                    SDL_BlitSurface(queueActuelleR,NULL,ecran,&position);
+                    break;
                 }
             }
         }
 
         sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);
         scoreV = TTF_RenderText_Blended(police,texteScoreV,couleurOr);
-        position.x = 0;
+        position.x = 32;
         position.y = 0;
         SDL_BlitSurface(scoreV, NULL, ecran, &position);
+        sprintf(texteScoreR,"ROUGE : %d",carte.snakeR.length);
+        scoreR = TTF_RenderText_Blended(police,texteScoreR,couleurOr);
+        position.x = 768;
+        position.y = 0;
+        SDL_BlitSurface(scoreR, NULL, ecran, &position);
 
         SDL_Flip(ecran);
-        SDL_Delay(100);
+        SDL_Delay(300);
     }
 
     for(int i=0; i<4; i++)
@@ -197,90 +271,6 @@ void jouer(SDL_Surface* ecran)
     SDL_FreeSurface(fond);
     SDL_FreeSurface(mur);
     SDL_FreeSurface(fruit);
-}
-
-
-
-void deplacer(Carte *carte)
-{
-    switch(carte->snakeV.head[0])
-    {
-    case HAUT:
-        if(carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]]==FRUIT)
-        {
-            ajouterCorp(carte);
-            carte->snakeV.head[1]--;
-            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-            break;
-        }
-        if(carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]]!=VIDE)//ou queue a ajouter
-        {
-            //carte.jouer =0;
-            break;
-        }
-        avancerQueue(carte);
-        avancerCorp(carte);
-        carte->snakeV.head[1]--;
-        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-        break;
-
-    case BAS:
-        if(carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]]==FRUIT)
-        {
-            ajouterCorp(carte);
-            carte->snakeV.head[1]++;
-            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-            break;
-        }
-        if(carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]]!=VIDE)//ou queue a ajouter
-        {
-            //carte.jouer =0;
-            break;
-        }
-        avancerQueue(carte);
-        avancerCorp(carte);
-        carte->snakeV.head[1]++;
-        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-        break;
-
-    case GAUCHE:
-        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1]==FRUIT)
-        {
-            ajouterCorp(carte);
-            carte->snakeV.head[2]--;
-            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-            break;
-        }
-        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1]!=VIDE)//ou queue a ajouter
-        {
-            //carte.jouer =0;
-            break;
-        }
-        avancerQueue(carte);
-        avancerCorp(carte);
-        carte->snakeV.head[2]--;
-        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-        break;
-
-    case DROITE:
-        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1]==FRUIT)
-        {
-            ajouterCorp(carte);
-            carte->snakeV.head[2]++;
-            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-            break;
-        }
-        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1]!=VIDE)//ou queue a ajouter
-        {
-            //carte.jouer =0;
-            break;
-        }
-        avancerQueue(carte);
-        avancerCorp(carte);
-        carte->snakeV.head[2]++;
-        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
-        break;
-    }
 }
 
 void updateClavier(Touches *etat_clavier)
@@ -304,11 +294,93 @@ void updateClavier(Touches *etat_clavier)
     }
 }
 
-void ajouterCorp(Carte *carte)
+void deplacerV(Carte *carte)
+{
+    switch(carte->snakeV.head[0])
+    {
+    case HAUT:
+        if(carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]]==FRUIT)
+        {
+            ajouterCorpV(carte);
+            carte->snakeV.head[1]--;
+            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+            break;
+        }
+        if(carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerQueueV(carte);
+        avancerCorpV(carte);
+        carte->snakeV.head[1]--;
+        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+        break;
+
+    case BAS:
+        if(carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]]==FRUIT)
+        {
+            ajouterCorpV(carte);
+            carte->snakeV.head[1]++;
+            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+            break;
+        }
+        if(carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerQueueV(carte);
+        avancerCorpV(carte);
+        carte->snakeV.head[1]++;
+        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+        break;
+
+    case GAUCHE:
+        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1]==FRUIT)
+        {
+            ajouterCorpV(carte);
+            carte->snakeV.head[2]--;
+            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+            break;
+        }
+        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerQueueV(carte);
+        avancerCorpV(carte);
+        carte->snakeV.head[2]--;
+        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+        break;
+
+    case DROITE:
+        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1]==FRUIT)
+        {
+            ajouterCorpV(carte);
+            carte->snakeV.head[2]++;
+            carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+            break;
+        }
+        if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerQueueV(carte);
+        avancerCorpV(carte);
+        carte->snakeV.head[2]++;
+        carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]]=TETEV;
+        break;
+    }
+}
+
+void ajouterCorpV(Carte *carte)
 {
     carte->fruit--;
     carte->snakeV.length++;
-    directionPremierCorp(carte);
+    directionPremierCorpV(carte);
     carte->snakeV.body[1][carte->snakeV.length-1]=carte->snakeV.head[1];
     carte->snakeV.body[2][carte->snakeV.length-1]=carte->snakeV.head[2];
     carte->plateau[carte->snakeV.body[1][carte->snakeV.length-1]][carte->snakeV.body[2][carte->snakeV.length-1 ]]=CORPV;
@@ -318,7 +390,7 @@ void ajouterCorp(Carte *carte)
     Mix_PlayChannel(2,manger,0);
 }
 
-void avancerCorp(Carte *carte)
+void avancerCorpV(Carte *carte)
 {
     for(int j=0; j<carte->snakeV.length-1; j++)
     {
@@ -330,7 +402,7 @@ void avancerCorp(Carte *carte)
     {
         if(carte->snakeV.body[0][carte->snakeV.length-1]!=carte->snakeV.head[0])
         {
-            directionPremierCorp(carte);
+            directionPremierCorpV(carte);
         }
         carte->snakeV.body[1][carte->snakeV.length-1]=carte->snakeV.head[1];
         carte->snakeV.body[2][carte->snakeV.length-1]=carte->snakeV.head[2];
@@ -338,26 +410,26 @@ void avancerCorp(Carte *carte)
     }
 }
 
-void avancerQueue(Carte *carte)
+void avancerQueueV(Carte *carte)
 {
     carte->plateau[carte->snakeV.tail[1]][carte->snakeV.tail[2]]=VIDE;
     if(carte->snakeV.length>0)
     {
-        directionQueue(carte, carte->snakeV.body[0][0]);
+        directionQueueV(carte, carte->snakeV.body[0][0]);
         carte->snakeV.tail[1]=carte->snakeV.body[1][0];
         carte->snakeV.tail[2]=carte->snakeV.body[2][0];
 
     }
     else
     {
-        directionQueue(carte, carte->snakeV.head[0]);
+        directionQueueV(carte, carte->snakeV.head[0]);
         carte->snakeV.tail[1]=carte->snakeV.head[1];
         carte->snakeV.tail[2]=carte->snakeV.head[2];
     }
     carte->plateau[carte->snakeV.tail[1]][carte->snakeV.tail[2]]=QUEUEV;
 }
 
-void directionPremierCorp(Carte *carte)
+void directionPremierCorpV(Carte *carte)
 {
     switch(carte->snakeV.head[0])
     {
@@ -420,7 +492,7 @@ void directionPremierCorp(Carte *carte)
     }
 }
 
-void directionQueue(Carte *carte, int directionPrecedente)
+void directionQueueV(Carte *carte, int directionPrecedente)
 {
     switch(directionPrecedente)
     {
@@ -474,6 +546,264 @@ void directionQueue(Carte *carte, int directionPrecedente)
         else
         {
             carte->snakeV.tail[0]=BAS;
+        }
+        break;
+    }
+
+}
+
+void deplacerR(Carte *carte)
+{
+    switch(carte->snakeR.head[0])
+    {
+    case HAUT:
+        if(carte->plateau[carte->snakeR.head[1]-1][carte->snakeR.head[2]]==FRUIT)
+        {
+            ajoutercorpR(carte);
+            carte->snakeR.head[1]--;
+            carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+            break;
+        }
+        if(carte->plateau[carte->snakeR.head[1]-1][carte->snakeR.head[2]]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerqueueR(carte);
+        avancercorpR(carte);
+        carte->snakeR.head[1]--;
+        carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+        break;
+
+    case BAS:
+        if(carte->plateau[carte->snakeR.head[1]+1][carte->snakeR.head[2]]==FRUIT)
+        {
+            ajoutercorpR(carte);
+            carte->snakeR.head[1]++;
+            carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+            break;
+        }
+        if(carte->plateau[carte->snakeR.head[1]+1][carte->snakeR.head[2]]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerqueueR(carte);
+        avancercorpR(carte);
+        carte->snakeR.head[1]++;
+        carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+        break;
+
+    case GAUCHE:
+        if(carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]-1]==FRUIT)
+        {
+            ajoutercorpR(carte);
+            carte->snakeR.head[2]--;
+            carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+            break;
+        }
+        if(carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]-1]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerqueueR(carte);
+        avancercorpR(carte);
+        carte->snakeR.head[2]--;
+        carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+        break;
+
+    case DROITE:
+        if(carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]+1]==FRUIT)
+        {
+            ajoutercorpR(carte);
+            carte->snakeR.head[2]++;
+            carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+            break;
+        }
+        if(carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]+1]!=VIDE)//ou queue a ajouter
+        {
+            //carte.jouer =0;
+            break;
+        }
+        avancerqueueR(carte);
+        avancercorpR(carte);
+        carte->snakeR.head[2]++;
+        carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]]=TETER;
+        break;
+    }
+}
+
+void ajoutercorpR(Carte *carte)
+{
+    carte->fruit--;
+    carte->snakeR.length++;
+    directionPremierCorpR(carte);
+    carte->snakeR.body[1][carte->snakeR.length-1]=carte->snakeR.head[1];
+    carte->snakeR.body[2][carte->snakeR.length-1]=carte->snakeR.head[2];
+    carte->plateau[carte->snakeR.body[1][carte->snakeR.length-1]][carte->snakeR.body[2][carte->snakeR.length-1 ]]=CORPR;
+
+    Mix_AllocateChannels(32);
+    Mix_Chunk *manger = Mix_LoadWAV("manger.wav");
+    Mix_PlayChannel(2,manger,0);
+}
+
+void avancercorpR(Carte *carte)
+{
+    for(int j=0; j<carte->snakeR.length-1; j++)
+    {
+        carte->snakeR.body[0][j]=carte->snakeR.body[0][j+1];
+        carte->snakeR.body[1][j]=carte->snakeR.body[1][j+1];
+        carte->snakeR.body[2][j]=carte->snakeR.body[2][j+1];
+    }
+    if(carte->snakeR.length>0)
+    {
+        if(carte->snakeR.body[0][carte->snakeR.length-1]!=carte->snakeR.head[0])
+        {
+            directionPremierCorpR(carte);
+        }
+        carte->snakeR.body[1][carte->snakeR.length-1]=carte->snakeR.head[1];
+        carte->snakeR.body[2][carte->snakeR.length-1]=carte->snakeR.head[2];
+        carte->plateau[carte->snakeR.body[1][carte->snakeR.length-1]][carte->snakeR.body[2][carte->snakeR.length-1]]=CORPR;
+    }
+}
+
+void avancerqueueR(Carte *carte)
+{
+    carte->plateau[carte->snakeR.tail[1]][carte->snakeR.tail[2]]=VIDE;
+    if(carte->snakeR.length>0)
+    {
+        directionQueueR(carte, carte->snakeR.body[0][0]);
+        carte->snakeR.tail[1]=carte->snakeR.body[1][0];
+        carte->snakeR.tail[2]=carte->snakeR.body[2][0];
+
+    }
+    else
+    {
+        directionQueueR(carte, carte->snakeR.head[0]);
+        carte->snakeR.tail[1]=carte->snakeR.head[1];
+        carte->snakeR.tail[2]=carte->snakeR.head[2];
+    }
+    carte->plateau[carte->snakeR.tail[1]][carte->snakeR.tail[2]]=QUEUER;
+}
+
+void directionPremierCorpR(Carte *carte)
+{
+    switch(carte->snakeR.head[0])
+    {
+    case HAUT:
+        switch(carte->snakeR.head[3])
+        {
+        case HAUT:
+            carte->snakeR.body[0][carte->snakeR.length-1]=HAUT;
+            break;
+        case GAUCHE:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEHD;
+            break;
+        case DROITE:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEHG;
+            break;
+        }
+        break;
+    case BAS:
+        switch(carte->snakeR.head[3])
+        {
+        case BAS:
+            carte->snakeR.body[0][carte->snakeR.length-1]=BAS;
+            break;
+        case GAUCHE:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEBD;
+            break;
+        case DROITE:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEBG;
+            break;
+        }
+        break;
+    case GAUCHE:
+        switch(carte->snakeR.head[3])
+        {
+        case HAUT:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEBG;
+            break;
+        case BAS:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEHG;
+            break;
+        case GAUCHE:
+            carte->snakeR.body[0][carte->snakeR.length-1]=GAUCHE;
+            break;
+        }
+        break;
+    case DROITE:
+        switch(carte->snakeR.head[3])
+        {
+        case HAUT:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEBD;
+            break;
+        case BAS:
+            carte->snakeR.body[0][carte->snakeR.length-1]=VIRAGEHD;
+            break;
+        case DROITE:
+            carte->snakeR.body[0][carte->snakeR.length-1]=DROITE;
+            break;
+        }
+        break;
+    }
+}
+
+void directionQueueR(Carte *carte, int directionPrecedente)
+{
+    switch(directionPrecedente)
+    {
+    case HAUT:
+        carte->snakeR.tail[0]=HAUT;
+        break;
+    case BAS:
+        carte->snakeR.tail[0]=BAS;
+        break;
+    case GAUCHE:
+        carte->snakeR.tail[0]=GAUCHE;
+        break;
+    case DROITE:
+        carte->snakeR.tail[0]=DROITE;
+        break;
+    case VIRAGEHG:
+        if(carte->snakeR.tail[0]==BAS)
+        {
+            carte->snakeR.tail[0]=GAUCHE;
+        }
+        else
+        {
+            carte->snakeR.tail[0]=HAUT;
+        }
+        break;
+    case VIRAGEHD:
+        if(carte->snakeR.tail[0]==BAS)
+        {
+            carte->snakeR.tail[0]=DROITE;
+        }
+        else
+        {
+            carte->snakeR.tail[0]=HAUT;
+        }
+        break;
+    case VIRAGEBG:
+        if(carte->snakeR.tail[0]==HAUT)
+        {
+            carte->snakeR.tail[0]=GAUCHE;
+        }
+        else
+        {
+            carte->snakeR.tail[0]=BAS;
+        }
+        break;
+    case VIRAGEBD:
+        if(carte->snakeR.tail[0]==HAUT)
+        {
+            carte->snakeR.tail[0]=DROITE;
+        }
+        else
+        {
+            carte->snakeR.tail[0]=BAS;
         }
         break;
     }
