@@ -18,7 +18,7 @@ void deplacer(Carte *carte);
 void ajouterCorp(Carte *carte);
 void avancerCorp(Carte *carte);
 void avancerQueue(Carte *carte);
-void directionPremierCorp(Carte *carte, int directionPrecedente);
+void directionPremierCorp(Carte *carte);
 void directionQueue(Carte *carte, int directionPrecedente);
 
 #endif // JEU_H_INCLUDED

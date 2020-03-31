@@ -22,11 +22,11 @@ int main(int argc, char *argv[])
     positionMenu.x=0;
     positionMenu.y=0;
 
-    /*Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,MIX_DEFAULT_CHANNELS,1024);
+    Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,MIX_DEFAULT_CHANNELS,1024);
     Mix_AllocateChannels(32);
     Mix_Music *musique;
-    musique = Mix_LoadMUS("zelda.mp3");
-    Mix_PlayMusic(musique, -1);*/
+    musique = Mix_LoadMUS("musique.mp3");
+    Mix_PlayMusic(musique, -1);
 
     while(continuer)
     {
@@ -46,9 +46,7 @@ int main(int argc, char *argv[])
 
             case SDLK_1:
                 jouer(ecran);
-
-                //SDL_Delay(2000);
-                //Mix_PlayMusic(musique, -1);
+                Mix_PlayMusic(musique, -1);
                 break;
             }
             break;
@@ -57,8 +55,8 @@ int main(int argc, char *argv[])
         SDL_BlitSurface(menu,NULL,ecran,&positionMenu);
         SDL_Flip(ecran);
     }
-    /* Mix_FreeMusic(musique);
-     Mix_CloseAudio();*/
+    Mix_FreeMusic(musique);
+    Mix_CloseAudio();
     SDL_FreeSurface(menu);
     SDL_QUIT;
     return EXIT_SUCCESS;
