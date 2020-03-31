@@ -171,12 +171,24 @@ void jouer(SDL_Surface* ecran)
             }
         }
 
+        if(my_rand(100)>50)//en cas de conflit, on tire au sort !
+        {
         teteActuelleV = teteV[carte.snakeV.head[0]];
         deplacerV(&carte);
         queueActuelleV = queueV[carte.snakeV.tail[0]];
         teteActuelleR = teteR[carte.snakeR.head[0]];
         deplacerR(&carte);
         queueActuelleR = queueR[carte.snakeR.tail[0]];
+        }
+        else
+        {
+        teteActuelleR = teteR[carte.snakeR.head[0]];
+        deplacerR(&carte);
+        queueActuelleR = queueR[carte.snakeR.tail[0]];
+        teteActuelleV = teteV[carte.snakeV.head[0]];
+        deplacerV(&carte);
+        queueActuelleV = queueV[carte.snakeV.tail[0]];
+        }
 
         if(carte.fruit==0)
         {

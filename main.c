@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     int continuer = 1;
 
     SDL_Init(SDL_INIT_VIDEO);
-
+    SDL_putenv("SDL_VIDEO_CENTERED=center");
     SDL_WM_SetIcon(IMG_Load("logo.png"),NULL);
     ecran = SDL_SetVideoMode(960,640,32,SDL_HWSURFACE | SDL_DOUBLEBUF);
     SDL_WM_SetCaption("SNAKE", NULL);

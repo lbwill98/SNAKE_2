@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1585692296 source:c:\users\william\c_projet\snake_2\jeu.c
+1585700559 source:c:\users\william\c_projet\snake_2\jeu.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -19,7 +19,7 @@
 	<SDL/SDL_ttf.h>
 	"utilitaires.h"
 
-1585610601 source:c:\users\william\c_projet\snake_2\main.c
+1585700559 source:c:\users\william\c_projet\snake_2\main.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -239,7 +239,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1585692296 c:\users\william\c_projet\snake_2\jeu.h
+1585700416 c:\users\william\c_projet\snake_2\jeu.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -250,7 +250,7 @@
 	<conio.h>
 	"utilitaires.h"
 
-1585692296 c:\users\william\c_projet\snake_2\utilitaires.h
+1585700416 c:\users\william\c_projet\snake_2\utilitaires.h
 	<string.h>
 	<time.h>
 	<unistd.h>
