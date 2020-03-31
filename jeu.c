@@ -12,7 +12,7 @@
 void jouer(SDL_Surface* ecran)
 {
     Carte carte;
-    initCarte(&carte,"I_LOVE_ENSEM.txt");
+    initCarte(&carte,"plateauB20X30.txt"); //I_LOVE_ENSEM //MATIS
 
     SDL_Rect position;
     Touches etat_clavier;
@@ -94,78 +94,83 @@ void jouer(SDL_Surface* ecran)
     {
         carte.snakeV.head[3]=carte.snakeV.head[0];
         carte.snakeR.head[3]=carte.snakeR.head[0];
-        updateClavier(&etat_clavier);
 
-        if(etat_clavier.key[SDLK_ESCAPE])
+        clock_t start_time = clock();
+        while (clock() < start_time + 50)
         {
-            carte.jouer = 0;
-        }
-        else if(etat_clavier.key[SDLK_UP] && (carte.plateau[carte.snakeV.head[1]-1][carte.snakeV.head[2]] ==VIDE || carte.plateau[carte.snakeV.head[1]-1][carte.snakeV.head[2]] ==FRUIT))
-        {
-            carte.snakeV.head[0] = HAUT;
-        }
-        else if(etat_clavier.key[SDLK_DOWN]  &&  (carte.plateau[carte.snakeV.head[1]+1][carte.snakeV.head[2]] ==VIDE || carte.plateau[carte.snakeV.head[1]+1][carte.snakeV.head[2]] ==FRUIT))
-        {
-            carte.snakeV.head[0] = BAS;
-        }
-        else if(etat_clavier.key[SDLK_LEFT] && (carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]-1] == VIDE || carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]-1] == FRUIT))
-        {
-            carte.snakeV.head[0] = GAUCHE;
-        }
-        else if(etat_clavier.key[SDLK_RIGHT] && (carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]+1] == VIDE || carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]+1] == FRUIT))
-        {
-            carte.snakeV.head[0] = DROITE;
-        }
-        else if(etat_clavier.key[SDLK_e] && (carte.plateau[carte.snakeR.head[1]-1][carte.snakeR.head[2]] == VIDE || carte.plateau[carte.snakeR.head[1]-1][carte.snakeR.head[2]] == FRUIT))
-        {
-            carte.snakeR.head[0] = HAUT;
-        }
-        else if(etat_clavier.key[SDLK_d]  && (carte.plateau[carte.snakeR.head[1]+1][carte.snakeR.head[2]] == VIDE || carte.plateau[carte.snakeR.head[1]+1][carte.snakeR.head[2]] == FRUIT))
-        {
-            carte.snakeR.head[0] = BAS;
-        }
-        else if(etat_clavier.key[SDLK_s] && (carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]-1] == VIDE || carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]-1] == FRUIT))
-        {
-            carte.snakeR.head[0] = GAUCHE;
-        }
-        else if(etat_clavier.key[SDLK_f] && (carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]+1] == VIDE || carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]+1] == FRUIT))
-        {
-            carte.snakeR.head[0] = DROITE;
-        }
+            SDL_PollEvent(&event);
+            switch(event.type)
+            {
+            case SDL_QUIT:
+                carte.jouer=0;
+                break;
 
-        /*
-                SDL_WaitEvent(&event);
-                switch(event.type)
+            case SDL_KEYDOWN:
+                switch(event.key.keysym.sym)
                 {
-                case SDL_QUIT:
-                    carte.jouer=0;
+                case SDLK_ESCAPE:
+                    carte.jouer = 0;
                     break;
 
-                case SDL_KEYDOWN:
-                    switch(event.key.keysym.sym)
+                case SDLK_UP:
+                    if(carte.plateau[carte.snakeV.head[1]-1][carte.snakeV.head[2]] ==VIDE || carte.plateau[carte.snakeV.head[1]-1][carte.snakeV.head[2]] ==FRUIT)
                     {
-                    case SDLK_ESCAPE:
-                        carte.jouer = 0;
-                        break;
-
-                    case SDLK_UP:
-                    carte.snakeV.head[0] = HAUT;
+                        carte.snakeV.head[0] = HAUT;
+                    }
                     break;
 
-                    case SDLK_DOWN:
+                case SDLK_DOWN:
+                    if(carte.plateau[carte.snakeV.head[1]+1][carte.snakeV.head[2]] ==VIDE || carte.plateau[carte.snakeV.head[1]+1][carte.snakeV.head[2]] ==FRUIT)
+                    {
                         carte.snakeV.head[0] = BAS;
-                        break;
-
-                    case SDLK_LEFT:
-                        carte.snakeV.head[0] = GAUCHE;
-                        break;
-
-                    case SDLK_RIGHT:
-                        carte.snakeV.head[0] = DROITE;
-                        break;
                     }
+                    break;
+
+                case SDLK_LEFT:
+                    if(carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]-1] ==VIDE || carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]-1] ==FRUIT)
+                    {
+                        carte.snakeV.head[0] = GAUCHE;
+                    }
+                    break;
+
+                case SDLK_RIGHT:
+                    if(carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]+1] ==VIDE || carte.plateau[carte.snakeV.head[1]][carte.snakeV.head[2]+1] ==FRUIT)
+                    {
+                        carte.snakeV.head[0] = DROITE;
+                    }
+                    break;
+
+                case SDLK_e:
+                    if(carte.plateau[carte.snakeR.head[1]-1][carte.snakeR.head[2]] ==VIDE || carte.plateau[carte.snakeR.head[1]-1][carte.snakeR.head[2]] ==FRUIT)
+                    {
+                        carte.snakeR.head[0] = HAUT;
+                    }
+                    break;
+
+                case SDLK_d:
+                    if(carte.plateau[carte.snakeR.head[1]+1][carte.snakeR.head[2]] ==VIDE || carte.plateau[carte.snakeR.head[1]+1][carte.snakeR.head[2]] ==FRUIT)
+                    {
+                        carte.snakeR.head[0] = BAS;
+                    }
+                    break;
+
+                case SDLK_s:
+                    if(carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]-1] ==VIDE || carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]-1] ==FRUIT)
+                    {
+                        carte.snakeR.head[0] = GAUCHE;
+                    }
+                    break;
+
+                case SDLK_f:
+                    if(carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]+1] ==VIDE || carte.plateau[carte.snakeR.head[1]][carte.snakeR.head[2]+1] ==FRUIT)
+                    {
+                        carte.snakeR.head[0] = DROITE;
+                    }
+                    break;
                 }
-        */
+            }
+        }
+
         teteActuelleV = teteV[carte.snakeV.head[0]];
         deplacerV(&carte);
         queueActuelleV = queueV[carte.snakeV.tail[0]];
@@ -255,7 +260,6 @@ void jouer(SDL_Surface* ecran)
         SDL_BlitSurface(scoreR, NULL, ecran, &position);
 
         SDL_Flip(ecran);
-        SDL_Delay(300);
     }
 
     for(int i=0; i<4; i++)
