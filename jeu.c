@@ -12,7 +12,7 @@
 void jouer(SDL_Surface* ecran)
 {
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt"); //I_LOVE_ENSEM //MATIS
+    initCarte(&carte,"I_LOVE_ENSEM.txt"); //plateauB20X30 //MATIS
 
     SDL_Rect position;
     Touches etat_clavier;
@@ -96,7 +96,7 @@ void jouer(SDL_Surface* ecran)
         carte.snakeR.head[3]=carte.snakeR.head[0];
 
         clock_t start_time = clock();
-        while (clock() < start_time + 50)
+        while (clock() < start_time + 150)
         {
             SDL_PollEvent(&event);
             switch(event.type)
