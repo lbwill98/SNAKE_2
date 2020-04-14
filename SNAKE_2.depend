@@ -9,7 +9,7 @@
 	<SDL/SDL_ttf.h>
 	"jeu.h"
 
-1585692296 source:c:\users\william\c_projet\snake_2\utilitaires.c
+1586887640 source:c:\users\william\c_projet\snake_2\utilitaires.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -19,7 +19,7 @@
 	<SDL/SDL_ttf.h>
 	"utilitaires.h"
 
-1585700559 source:c:\users\william\c_projet\snake_2\main.c
+1586887640 source:c:\users\william\c_projet\snake_2\main.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -250,7 +250,7 @@
 	<conio.h>
 	"utilitaires.h"
 
-1585700416 c:\users\william\c_projet\snake_2\utilitaires.h
+1586887640 c:\users\william\c_projet\snake_2\utilitaires.h
 	<string.h>
 	<time.h>
 	<unistd.h>
