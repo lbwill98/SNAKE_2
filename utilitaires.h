@@ -14,11 +14,6 @@ enum {VIDE,MUR,TETEV,CORPV,QUEUEV,TETER,CORPR,QUEUER,FRUIT};//type de surface
 
 typedef struct
 {
-    int key[SDLK_LALT];
-} Touches;
-
-typedef struct
-{
     int length;
     int head[4];
     int **body;

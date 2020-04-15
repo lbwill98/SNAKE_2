@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1585759425 source:c:\users\william\c_projet\snake_2\jeu.c
+1586964907 source:c:\users\william\c_projet\snake_2\jeu.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -9,7 +9,7 @@
 	<SDL/SDL_ttf.h>
 	"jeu.h"
 
-1586887640 source:c:\users\william\c_projet\snake_2\utilitaires.c
+1586962689 source:c:\users\william\c_projet\snake_2\utilitaires.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -239,7 +239,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1585700416 c:\users\william\c_projet\snake_2\jeu.h
+1586963040 c:\users\william\c_projet\snake_2\jeu.h
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -248,13 +248,21 @@
 	<pthread.h>
 	<windows.h>
 	<conio.h>
-	"utilitaires.h"
+	"ia.h"
 
-1586887640 c:\users\william\c_projet\snake_2\utilitaires.h
+1586963252 c:\users\william\c_projet\snake_2\utilitaires.h
 	<string.h>
 	<time.h>
 	<unistd.h>
 	<pthread.h>
 	<windows.h>
 	<conio.h>
+
+1586962778 c:\users\william\c_projet\snake_2\ia.h
+	"utilitaires.h"
+
+1586962778 source:c:\users\william\c_projet\snake_2\ia.c
+	<stdlib.h>
+	<stdio.h>
+	"ia.h"
 

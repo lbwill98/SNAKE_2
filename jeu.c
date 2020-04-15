@@ -8,15 +8,14 @@
 
 #include "jeu.h"
 
+int message=0;
 
 void jouer(SDL_Surface* ecran)
 {
     Carte carte;
-    initCarte(&carte,"I_LOVE_ENSEM.txt"); //plateauB20X30 //MATIS
+    initCarte(&carte,"plateauB20X30.txt"); //plateauB20X30 //MATIS //I_LOVE_ENSEM //ez //allan
 
     SDL_Rect position;
-    Touches etat_clavier;
-    memset(&etat_clavier,0,sizeof(etat_clavier));
     SDL_Event event;
 
     TTF_Init();
@@ -95,6 +94,10 @@ void jouer(SDL_Surface* ecran)
         carte.snakeV.head[3]=carte.snakeV.head[0];
         carte.snakeR.head[3]=carte.snakeR.head[0];
 
+        //aiV1(&carte);
+        //aiR1(&carte);
+        aiR2(&carte);
+
         clock_t start_time = clock();
         while (clock() < start_time + 150)
         {
@@ -110,6 +113,10 @@ void jouer(SDL_Surface* ecran)
                 {
                 case SDLK_ESCAPE:
                     carte.jouer = 0;
+                    break;
+
+                case SDLK_SPACE:
+                    SDL_WaitEvent(&event);
                     break;
 
                 case SDLK_UP:
@@ -259,8 +266,7 @@ void jouer(SDL_Surface* ecran)
                 }
             }
         }
-
-        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);
+        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);//message);//dijkstratab[1][28][1]);//carte.snakeV.length);//
         scoreV = TTF_RenderText_Blended(police,texteScoreV,couleurOr);
         position.x = 32;
         position.y = 0;
@@ -270,7 +276,6 @@ void jouer(SDL_Surface* ecran)
         position.x = 768;
         position.y = 0;
         SDL_BlitSurface(scoreR, NULL, ecran, &position);
-
         SDL_Flip(ecran);
     }
 
@@ -287,92 +292,12 @@ void jouer(SDL_Surface* ecran)
     SDL_FreeSurface(fond);
     SDL_FreeSurface(mur);
     SDL_FreeSurface(fruit);
+    /*free(carte.plateau);
+    free(carte.adjtab);
+    free(carte.snakeV.body);
+    free(carte.snakeR.body);*/
 }
 
-void aiV1(Carte *carte)
-{
-    int fruit[2];
-    for(int i=0; i<carte->lignes; i++)
-    {
-        for(int j=0; j<carte->colonnes; j++)
-        {
-            if(carte->plateau[i][j]==FRUIT)
-            {
-                fruit[0]=i;
-                fruit[1]=j;
-            }
-        }
-    }
-    if(carte->snakeV.head[1]>fruit[0] && (carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]] ==VIDE || carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]] ==FRUIT))
-    {
-        carte->snakeV.head[0]=HAUT;
-    }
-    if(carte->snakeV.head[1]<fruit[0] && (carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]] ==VIDE || carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]] ==FRUIT))
-    {
-        carte->snakeV.head[0]=BAS;
-    }
-    if(carte->snakeV.head[2]>fruit[1] && (carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1] ==VIDE || carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1] ==FRUIT))
-    {
-        carte->snakeV.head[0]=GAUCHE;
-    }
-    if(carte->snakeV.head[2]<fruit[1] && (carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1] ==VIDE || carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1] ==FRUIT))
-    {
-        carte->snakeV.head[0]=DROITE;
-    }
-}
-
-void aiR1(Carte *carte)
-{
-    int fruit[2];
-    for(int i=0; i<carte->lignes; i++)
-    {
-        for(int j=0; j<carte->colonnes; j++)
-        {
-            if(carte->plateau[i][j]==FRUIT)
-            {
-                fruit[0]=i;
-                fruit[1]=j;
-            }
-        }
-    }
-    if(carte->snakeR.head[1]>fruit[0] && (carte->plateau[carte->snakeR.head[1]-1][carte->snakeR.head[2]] ==VIDE || carte->plateau[carte->snakeR.head[1]-1][carte->snakeR.head[2]] ==FRUIT))
-    {
-        carte->snakeR.head[0]=HAUT;
-    }
-    if(carte->snakeR.head[1]<fruit[0] && (carte->plateau[carte->snakeR.head[1]+1][carte->snakeR.head[2]] ==VIDE || carte->plateau[carte->snakeR.head[1]+1][carte->snakeR.head[2]] ==FRUIT))
-    {
-        carte->snakeR.head[0]=BAS;
-    }
-    if(carte->snakeR.head[2]>fruit[1] && (carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]-1] ==VIDE || carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]-1] ==FRUIT))
-    {
-        carte->snakeR.head[0]=GAUCHE;
-    }
-    if(carte->snakeR.head[2]<fruit[1] && (carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]+1] ==VIDE || carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]+1] ==FRUIT))
-    {
-        carte->snakeR.head[0]=DROITE;
-    }
-}
-
-void updateClavier(Touches *etat_clavier)
-{
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-        switch(event.type)
-        {
-        case SDL_KEYDOWN:
-            etat_clavier -> key[event.key.keysym.sym]=1;
-            break;
-
-        case SDL_KEYUP:
-            etat_clavier -> key[event.key.keysym.sym]=0;
-            break;
-
-        default:
-            break;
-        }
-    }
-}
 
 void deplacerV(Carte *carte)
 {
@@ -629,7 +554,6 @@ void directionQueueV(Carte *carte, int directionPrecedente)
         }
         break;
     }
-
 }
 
 void deplacerR(Carte *carte)
@@ -887,5 +811,4 @@ void directionQueueR(Carte *carte, int directionPrecedente)
         }
         break;
     }
-
 }

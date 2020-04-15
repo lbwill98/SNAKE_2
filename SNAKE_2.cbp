@@ -47,6 +47,10 @@
 			<Add library="dxguid" />
 			<Add directory="C:/Program Files (x86)/CodeBlocks/SDL-1.2.15/lib" />
 		</Linker>
+		<Unit filename="ia.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ia.h" />
 		<Unit filename="jeu.c">
 			<Option compilerVar="CC" />
 		</Unit>

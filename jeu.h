@@ -8,11 +8,10 @@
 #include <pthread.h>
 #include <windows.h>
 #include <conio.h>
-#include "utilitaires.h"
+
+#include "ia.h"
 
 
-
-void updateClavier(Touches *etat_clavier);
 
 void jouer(SDL_Surface* ecran);
 void deplacerV(Carte *carte);
