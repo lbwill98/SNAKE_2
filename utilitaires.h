@@ -15,9 +15,9 @@ enum {VIDE,MUR,TETEV,CORPV,QUEUEV,TETER,CORPR,QUEUER,FRUIT};//type de surface
 typedef struct
 {
     int length;
-    int head[4];
-    int **body;
-    int tail[3];
+    int head[4];//[0] direction //[1] ligne // [2] colonne //[3] direction precedente
+    int **body;//[0] direction //[1] ligne // [2] colonne
+    int tail[6];//[0] direction //[1] ligne // [2] colonne //[3]direction precedente // [4] ligne precedente // [5] colonne precedente
 } Snake;
 
 typedef struct
@@ -30,10 +30,6 @@ typedef struct
     Snake snakeV;
     Snake snakeR;
 } Carte;
-
-
-
-
 
 void initCarte(Carte *carte, char * fichier);
 void placer_fruit(Carte *carte);

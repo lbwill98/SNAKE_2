@@ -13,7 +13,7 @@ int message=0;
 void jouer(SDL_Surface* ecran)
 {
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt"); //plateauB20X30 //MATIS //I_LOVE_ENSEM //ez //allan
+    initCarte(&carte,"ez.txt"); //plateauB20X30 //MATIS //I_LOVE_ENSEM //ez //allan
 
     SDL_Rect position;
     SDL_Event event;
@@ -96,10 +96,11 @@ void jouer(SDL_Surface* ecran)
 
         //aiV1(&carte);
         //aiR1(&carte);
-        aiR2(&carte);
+        //aiV2(&carte);
+        aiR3(&carte);
 
         clock_t start_time = clock();
-        while (clock() < start_time + 150)
+        while (clock() < start_time + 1)
         {
             SDL_PollEvent(&event);
             switch(event.type)
@@ -180,24 +181,24 @@ void jouer(SDL_Surface* ecran)
 
         if(my_rand(100)>50)//en cas de conflit, on tire au sort !
         {
-        teteActuelleV = teteV[carte.snakeV.head[0]];
-        deplacerV(&carte);
-        queueActuelleV = queueV[carte.snakeV.tail[0]];
-        teteActuelleR = teteR[carte.snakeR.head[0]];
-        deplacerR(&carte);
-        queueActuelleR = queueR[carte.snakeR.tail[0]];
+            teteActuelleV = teteV[carte.snakeV.head[0]];
+            deplacerV(&carte);
+            queueActuelleV = queueV[carte.snakeV.tail[0]];
+            teteActuelleR = teteR[carte.snakeR.head[0]];
+            deplacerR(&carte);
+            queueActuelleR = queueR[carte.snakeR.tail[0]];
         }
         else
         {
-        teteActuelleR = teteR[carte.snakeR.head[0]];
-        deplacerR(&carte);
-        queueActuelleR = queueR[carte.snakeR.tail[0]];
-        teteActuelleV = teteV[carte.snakeV.head[0]];
-        deplacerV(&carte);
-        queueActuelleV = queueV[carte.snakeV.tail[0]];
+            teteActuelleR = teteR[carte.snakeR.head[0]];
+            deplacerR(&carte);
+            queueActuelleR = queueR[carte.snakeR.tail[0]];
+            teteActuelleV = teteV[carte.snakeV.head[0]];
+            deplacerV(&carte);
+            queueActuelleV = queueV[carte.snakeV.tail[0]];
         }
 
-        if(carte.fruit==0)
+        if(carte.fruit<1)
         {
             placer_fruit(&carte);
         }
@@ -417,9 +418,13 @@ void avancerCorpV(Carte *carte)
 
 void avancerQueueV(Carte *carte)
 {
+    carte->snakeV.tail[3]=carte->snakeV.tail[0];
+    carte->snakeV.tail[4]=carte->snakeV.tail[1];
+    carte->snakeV.tail[5]=carte->snakeV.tail[2];
     carte->plateau[carte->snakeV.tail[1]][carte->snakeV.tail[2]]=VIDE;
     if(carte->snakeV.length>0)
     {
+        carte->snakeV.tail[2]=carte->snakeV.body[2][0];
         directionQueueV(carte, carte->snakeV.body[0][0]);
         carte->snakeV.tail[1]=carte->snakeV.body[1][0];
         carte->snakeV.tail[2]=carte->snakeV.body[2][0];
@@ -674,6 +679,9 @@ void avancercorpR(Carte *carte)
 
 void avancerqueueR(Carte *carte)
 {
+    carte->snakeR.tail[3]=carte->snakeR.tail[0];
+    carte->snakeR.tail[4]=carte->snakeR.tail[1];
+    carte->snakeR.tail[5]=carte->snakeR.tail[2];
     carte->plateau[carte->snakeR.tail[1]][carte->snakeR.tail[2]]=VIDE;
     if(carte->snakeR.length>0)
     {

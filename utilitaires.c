@@ -144,6 +144,13 @@ void initCarte(Carte *carte, char * fichier)
     carte->snakeV.head[3]=carte->snakeV.head[0];
     carte->snakeR.head[3]=carte->snakeR.head[0];
 
+    carte->snakeV.tail[3]=carte->snakeV.tail[0];
+    carte->snakeR.tail[3]=carte->snakeR.tail[0];
+    carte->snakeV.tail[4]=carte->snakeV.tail[1];
+    carte->snakeR.tail[4]=carte->snakeR.tail[1];
+    carte->snakeV.tail[5]=carte->snakeV.tail[2];
+    carte->snakeR.tail[5]=carte->snakeR.tail[2];
+
     if(carte->fruit==0)//si pas de fruit dans le fichier
     {
         placer_fruit(carte);
