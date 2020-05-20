@@ -48,6 +48,16 @@ int main(int argc, char *argv[])
                 jouer(ecran);
                 Mix_PlayMusic(musique, -1);
                 break;
+
+            case SDLK_2:
+                jouerServeur(ecran);
+                Mix_PlayMusic(musique, -1);
+                break;
+
+            case SDLK_3:
+                jouerClient(ecran);
+                Mix_PlayMusic(musique, -1);
+                break;
             }
             break;
 
