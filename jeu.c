@@ -13,7 +13,7 @@ int message=0;
 void jouer(SDL_Surface* ecran)
 {
     Carte carte;
-    initCarte(&carte,"ez.txt"); //plateauB20X30 //MATIS //I_LOVE_ENSEM //ez //allan
+    initCarte(&carte,"plateauB20X30.txt"); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
 
     SDL_Rect position;
     SDL_Event event;
@@ -100,7 +100,7 @@ void jouer(SDL_Surface* ecran)
         aiR3(&carte);
 
         clock_t start_time = clock();
-        while (clock() < start_time + 1)
+        while (clock() < start_time + 3)
         {
             SDL_PollEvent(&event);
             switch(event.type)
