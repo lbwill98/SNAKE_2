@@ -14,10 +14,11 @@
 
 #include "jeu.h"
 
-void jouerClient(SDL_Surface* ecran)
+int messageClient = -1;
+void jouerClient(SDL_Surface* ecran, int speed)
 {
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt"); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
+    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
 
     SDL_Rect position;
     SDL_Event event;
@@ -89,21 +90,18 @@ void jouerClient(SDL_Surface* ecran)
     queueR[DROITE] = IMG_Load("queueRD.png");
     queueActuelleR = queueR[carte.snakeR.tail[0]];
 
-    fond = IMG_Load("plateauBlanc2030.png");
+    fond = IMG_Load("plateauPierre2030.png");
     mur = IMG_Load("mur.png");
     fruit = IMG_Load("fruitOr.png");
 
 
     WSADATA WSAData;
-    int taille,bd,lg = 1, un_entier;
+    int taille,bd,lg=10;
     SOCKET sock;
     SOCKADDR_IN  sin; //adresse internet locale
     SOCKADDR_IN csin; //pointeur vers adresse internet expediteur (recuperée de l'entete paquet UDP recu)
     char *name = "localhost";
-    char *adr_serv="127.0.0.1";
-    char msg;
-    char msg1; // pour recevoir ACK
-    int sinsize;
+    char *adr_serv="127.0.0.1";//"192.168.1.16";
 
     struct hostent *host;
 
@@ -143,7 +141,7 @@ void jouerClient(SDL_Surface* ecran)
         carte.snakeR.head[3]=carte.snakeR.head[0];
 
         clock_t start_time = clock();
-        while (clock() < start_time + 100)
+        while (clock() < start_time + carte.speed)
         {
             SDL_PollEvent(&event);
             switch(event.type)
@@ -192,20 +190,21 @@ void jouerClient(SDL_Surface* ecran)
                     break;
                 }
             }
+        }
 
-            //printf("Quel est votre message ?  ");
-        //scanf("%s", msg); //pas de ENTREE a la fin, mais coupe si espace
-        //fgets(msg, 1, stdin); //ENTREE s'ajoute a la
-        sprintf(msg, "%d", carte.snakeR.head[0]);
-        bd = sendto(sock,msg,lg,0,&sin,taille);
+        bd = sendto(sock,&carte.snakeR.head[0],lg,0,&sin,taille);
+
+        int sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
 
         sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.positionFruit[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
 
-        bd= recvfrom(sock, msg1, lg, 0, (SOCKADDR *)&csin, &sinsize);
-        //printf("%s\n", msg1);
-        carte.snakeV.head[0] = msg1-'0';
+        sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.positionFruit[1], lg, 0, (SOCKADDR *)&csin, &sinsize);
 
-        }
+        carte.plateau[carte.positionFruit[0]][carte.positionFruit[1]]=FRUIT;
+        carte.fruit=1;
 
         if(my_rand(100)>50)//en cas de conflit, on tire au sort !
         {
@@ -224,11 +223,6 @@ void jouerClient(SDL_Surface* ecran)
             teteActuelleV = teteV[carte.snakeV.head[0]];
             deplacerV(&carte);
             queueActuelleV = queueV[carte.snakeV.tail[0]];
-        }
-
-        if(carte.fruit<1)
-        {
-            placer_fruit(&carte);
         }
 
         position.x = 0;
@@ -295,14 +289,14 @@ void jouerClient(SDL_Surface* ecran)
                 }
             }
         }
-        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);//message);//dijkstratab[1][28][1]);//carte.snakeV.length);//
+        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);//messageClient);//dijkstratab[1][28][1]);//
         scoreV = TTF_RenderText_Blended(police,texteScoreV,couleurOr);
-        position.x = 32;
+        position.x = 64;
         position.y = 0;
         SDL_BlitSurface(scoreV, NULL, ecran, &position);
-        sprintf(texteScoreR,"ROUGE : %d",carte.snakeR.length);
+        sprintf(texteScoreR,"RED : %d",carte.snakeR.length);
         scoreR = TTF_RenderText_Blended(police,texteScoreR,couleurOr);
-        position.x = 768;
+        position.x = 800;
         position.y = 0;
         SDL_BlitSurface(scoreR, NULL, ecran, &position);
         SDL_Flip(ecran);
@@ -321,10 +315,7 @@ void jouerClient(SDL_Surface* ecran)
     SDL_FreeSurface(fond);
     SDL_FreeSurface(mur);
     SDL_FreeSurface(fruit);
-    /*free(carte.plateau);
-    free(carte.adjtab);
-    free(carte.snakeV.body);
-    free(carte.snakeR.body);*/
+    free(&carte);
 
     closesocket(sock);
     WSACleanup();

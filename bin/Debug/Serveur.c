@@ -14,10 +14,12 @@
 
 #include "jeu.h"
 
-void jouerServeur(SDL_Surface* ecran)
+int messageServeur = -1;
+
+void jouerServeur(SDL_Surface* ecran, int speed)
 {
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt"); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
+    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM //MATIS//ez //allan
 
     SDL_Rect position;
     SDL_Event event;
@@ -89,16 +91,14 @@ void jouerServeur(SDL_Surface* ecran)
     queueR[DROITE] = IMG_Load("queueRD.png");
     queueActuelleR = queueR[carte.snakeR.tail[0]];
 
-    fond = IMG_Load("plateauBlanc2030.png");
+    fond = IMG_Load("plateauPierre2030.png");
     mur = IMG_Load("mur.png");
     fruit = IMG_Load("fruitOr.png");
 
     //partie reseau///////////////////////////////////////////////////
 
     WSADATA WSAData;
-    int taille,bd,lg = 1;
-    char msg;
-    char msg1;// = "message bien recu ";
+    int taille,bd,lg=10;
     SOCKET sock;
     SOCKADDR_IN sin;
     SOCKADDR_IN csin;
@@ -111,8 +111,6 @@ void jouerServeur(SDL_Surface* ecran)
     sin.sin_family = AF_INET;
     sin.sin_port = htons(LEPORT);
     bd=bind(sock, (SOCKADDR *)&sin, sizeof(sin));
-    //printf("%d",bd);
-
     taille = sizeof(sin);
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +121,7 @@ void jouerServeur(SDL_Surface* ecran)
         carte.snakeR.head[3]=carte.snakeR.head[0];
 
         clock_t start_time = clock();
-        while (clock() < start_time + 100)
+        while (clock() < start_time + carte.speed)
         {
             SDL_PollEvent(&event);
             switch(event.type)
@@ -172,16 +170,21 @@ void jouerServeur(SDL_Surface* ecran)
                     break;
                 }
             }
-
-            int sinsize = sizeof(csin);
-            bd = recvfrom(sock,msg,lg,0, (SOCKADDR *)&csin, &sinsize);
-            carte.snakeR.head[0] = msg-'0';
-
-            /*sprintf(msg1, "%d", carte.snakeV.head[0]);
-
-            bd = sendto(sock, msg1, lg, 0, (SOCKADDR *)&csin, taille);*/
         }
 
+        int sinsize = sizeof(csin);
+        bd = recvfrom(sock,&carte.snakeR.head[0],lg,0, (SOCKADDR *)&csin, &sinsize);
+
+        bd = sendto(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, taille);
+
+        if(carte.fruit<1)
+        {
+            placer_fruit(&carte);
+        }
+
+        bd = sendto(sock, &carte.positionFruit[0], lg, 0, (SOCKADDR *)&csin, taille);
+
+        bd = sendto(sock, &carte.positionFruit[1], lg, 0, (SOCKADDR *)&csin, taille);
 
         if(my_rand(100)>50)//en cas de conflit, on tire au sort !
         {
@@ -202,10 +205,6 @@ void jouerServeur(SDL_Surface* ecran)
             queueActuelleV = queueV[carte.snakeV.tail[0]];
         }
 
-        if(carte.fruit<1)
-        {
-            placer_fruit(&carte);
-        }
 
         position.x = 0;
         position.y = 0;
@@ -271,14 +270,14 @@ void jouerServeur(SDL_Surface* ecran)
                 }
             }
         }
-        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);//message);//dijkstratab[1][28][1]);//carte.snakeV.length);//
+        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);//messageServeur);//carte.snakeR.head[0]);//carte.snakeV.length);//dijkstratab[1][28][1]);//
         scoreV = TTF_RenderText_Blended(police,texteScoreV,couleurOr);
-        position.x = 32;
+        position.x = 64;
         position.y = 0;
         SDL_BlitSurface(scoreV, NULL, ecran, &position);
-        sprintf(texteScoreR,"ROUGE : %d",carte.snakeR.length);
+        sprintf(texteScoreR,"RED : %d",carte.snakeR.length);
         scoreR = TTF_RenderText_Blended(police,texteScoreR,couleurOr);
-        position.x = 768;
+        position.x = 800;
         position.y = 0;
         SDL_BlitSurface(scoreR, NULL, ecran, &position);
         SDL_Flip(ecran);
@@ -297,12 +296,7 @@ void jouerServeur(SDL_Surface* ecran)
     SDL_FreeSurface(fond);
     SDL_FreeSurface(mur);
     SDL_FreeSurface(fruit);
-    /*free(carte.plateau);
-    free(carte.adjtab);
-    free(carte.snakeV.body);
-    free(carte.snakeR.body);*/
-
-    /* On devrait faire closesocket(sock); puis WSACleanup(); mais puisqu'on a entré une boucle infinie ... */
+    free(&carte);
 
     closesocket(sock);
     WSACleanup();

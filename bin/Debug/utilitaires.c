@@ -8,7 +8,7 @@
 
 #include "utilitaires.h"
 
-void initCarte(Carte *carte, char * fichier)
+void initCarte(Carte *carte, char * fichier, int speed)
 {
     FILE *f;
     char str[100];
@@ -17,6 +17,9 @@ void initCarte(Carte *carte, char * fichier)
     carte->jouer = 1;
     carte->lignes = 0;
     carte->fruit = 0;
+    carte->positionFruit[0]=-1;
+    carte->positionFruit[1]=-1;
+    carte->speed = speed;
     f = fopen(fichier,"r");
     if (f == NULL)
     {
@@ -151,10 +154,10 @@ void initCarte(Carte *carte, char * fichier)
     carte->snakeV.tail[5]=carte->snakeV.tail[2];
     carte->snakeR.tail[5]=carte->snakeR.tail[2];
 
-    if(carte->fruit==0)//si pas de fruit dans le fichier
+    /*if(carte->fruit==0)//si pas de fruit dans le fichier
     {
         placer_fruit(carte);
-    }
+    }*/
 }
 
 void placer_fruit(Carte *carte)
@@ -168,6 +171,8 @@ void placer_fruit(Carte *carte)
         {
             carte->plateau[i][j] = FRUIT;
             carte->fruit++;
+            carte->positionFruit[0]=i;
+            carte->positionFruit[1]=j;
             placer = 1;
         }
     }

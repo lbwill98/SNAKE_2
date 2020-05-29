@@ -10,10 +10,10 @@
 
 int message=0;
 
-void jouer(SDL_Surface* ecran)
+void jouer(SDL_Surface* ecran, int speed)
 {
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt"); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
+    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM
 
     SDL_Rect position;
     SDL_Event event;
@@ -85,7 +85,7 @@ void jouer(SDL_Surface* ecran)
     queueR[DROITE] = IMG_Load("queueRD.png");
     queueActuelleR = queueR[carte.snakeR.tail[0]];
 
-    fond = IMG_Load("plateauBlanc2030.png");
+    fond = IMG_Load("plateauPierre2030.png");
     mur = IMG_Load("mur.png");
     fruit = IMG_Load("fruitOr.png");
 
@@ -100,7 +100,7 @@ void jouer(SDL_Surface* ecran)
         aiR3(&carte);
 
         clock_t start_time = clock();
-        while (clock() < start_time + 3)
+        while (clock() < start_time + carte.speed)
         {
             SDL_PollEvent(&event);
             switch(event.type)
@@ -267,14 +267,14 @@ void jouer(SDL_Surface* ecran)
                 }
             }
         }
-        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);//message);//dijkstratab[1][28][1]);//carte.snakeV.length);//
+        sprintf(texteScoreV,"GREEN : %d",carte.snakeV.length);//message);//dijkstratab[1][28][1]);//carte.snakeV.length);//
         scoreV = TTF_RenderText_Blended(police,texteScoreV,couleurOr);
-        position.x = 32;
+        position.x = 64;
         position.y = 0;
         SDL_BlitSurface(scoreV, NULL, ecran, &position);
-        sprintf(texteScoreR,"ROUGE : %d",carte.snakeR.length);
+        sprintf(texteScoreR,"RED : %d",carte.snakeR.length);
         scoreR = TTF_RenderText_Blended(police,texteScoreR,couleurOr);
-        position.x = 768;
+        position.x = 800;
         position.y = 0;
         SDL_BlitSurface(scoreR, NULL, ecran, &position);
         SDL_Flip(ecran);
@@ -293,10 +293,7 @@ void jouer(SDL_Surface* ecran)
     SDL_FreeSurface(fond);
     SDL_FreeSurface(mur);
     SDL_FreeSurface(fruit);
-    /*free(carte.plateau);
-    free(carte.adjtab);
-    free(carte.snakeV.body);
-    free(carte.snakeR.body);*/
+    free(&carte);
 }
 
 

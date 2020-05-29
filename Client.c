@@ -15,10 +15,50 @@
 #include "jeu.h"
 
 int messageClient = -1;
-void jouerClient(SDL_Surface* ecran)
+void jouerClient(SDL_Surface* ecran, int speed)
 {
+    WSADATA WSAData;
+    int taille,bd,lg=10;
+    SOCKET sock;
+    SOCKADDR_IN  sin; //adresse internet locale
+    SOCKADDR_IN csin; //pointeur vers adresse internet expediteur (recuperée de l'entete paquet UDP recu)
+    char *name = "localhost";
+    char *adr_serv="127.0.0.1";//"192.168.1.16";
+
+    struct hostent *host;
+
+    /* RAPPEL de struct hostent, definie dans netdb.h
+    struct  hostent {
+    	char    *h_name;        // official name of host
+    	char    **h_aliases;    // alias list
+    	int     h_addrtype;     // host address type
+    	int     h_length;       // length of address
+    	char    **h_addr_list;  // list of addresses from name server
+    };
+    */
+    WSAStartup(MAKEWORD(2,0), &WSAData);
+    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    printf("le socket est identifie par : %d \n",sock);
+
+    taille = sizeof(sin);
+
+// Avec le DNS, on obtient l'adresse ip par gethostbyname()
+    if ((host = gethostbyname(name))==NULL)
+    {
+        perror("Nom de machine");
+        exit(2);
+    };
+    memcpy (host -> h_addr_list[0], &sin.sin_addr,host -> h_length);
+
+// si on connait l'adresse ip de destination en chiffre, on peut l'affecter directement:
+    //un_entier=inet_aton(adr_serv, &padin.sin_addr);
+    sin.sin_addr.s_addr = inet_addr(adr_serv);
+    sin.sin_family = AF_INET;
+    sin.sin_port   = htons(LEPORT);
+
+
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt"); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
+    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
 
     SDL_Rect position;
     SDL_Event event;
@@ -90,60 +130,23 @@ void jouerClient(SDL_Surface* ecran)
     queueR[DROITE] = IMG_Load("queueRD.png");
     queueActuelleR = queueR[carte.snakeR.tail[0]];
 
-    fond = IMG_Load("plateauBlanc2030.png");
+    fond = IMG_Load("plateauPierre2030.png");
     mur = IMG_Load("mur.png");
     fruit = IMG_Load("fruitOr.png");
 
 
-    WSADATA WSAData;
-    int taille,bd,lg = 1, un_entier;
-    SOCKET sock;
-    SOCKADDR_IN  sin; //adresse internet locale
-    SOCKADDR_IN csin; //pointeur vers adresse internet expediteur (recuperée de l'entete paquet UDP recu)
-    char *name = "localhost";
-    char *adr_serv="127.0.0.1";
-    char msg[1];
-    char msg1[1]; // pour recevoir ACK
-
-    struct hostent *host;
-
-    /* RAPPEL de struct hostent, definie dans netdb.h
-    struct  hostent {
-    	char    *h_name;        // official name of host
-    	char    **h_aliases;    // alias list
-    	int     h_addrtype;     // host address type
-    	int     h_length;       // length of address
-    	char    **h_addr_list;  // list of addresses from name server
-    };
-    */
-    WSAStartup(MAKEWORD(2,0), &WSAData);
-    sock = socket(AF_INET, SOCK_DGRAM, 0);
-    printf("le socket est identifie par : %d \n",sock);
-
-    taille = sizeof(sin);
-
-// Avec le DNS, on obtient l'adresse ip par gethostbyname()
-    if ((host = gethostbyname(name))==NULL)
-    {
-        perror("Nom de machine");
-        exit(2);
-    };
-    memcpy (host -> h_addr_list[0], &sin.sin_addr,host -> h_length);
-
-// si on connait l'adresse ip de destination en chiffre, on peut l'affecter directement:
-    //un_entier=inet_aton(adr_serv, &padin.sin_addr);
-    sin.sin_addr.s_addr = inet_addr(adr_serv);
-    sin.sin_family = AF_INET;
-    sin.sin_port   = htons(LEPORT);
 
 
+
+    int sinsize = sizeof(csin);
+    bd= recvfrom(sock, &carte.speed, lg, 0, (SOCKADDR *)&csin, &sinsize);
     while(carte.jouer==1)
     {
         carte.snakeV.head[3]=carte.snakeV.head[0];
         carte.snakeR.head[3]=carte.snakeR.head[0];
 
         clock_t start_time = clock();
-        while (clock() < start_time + 100)
+        while (clock() < start_time + carte.speed)
         {
             SDL_PollEvent(&event);
             switch(event.type)
@@ -192,16 +195,21 @@ void jouerClient(SDL_Surface* ecran)
                     break;
                 }
             }
-
-        sprintf(msg, "%d", carte.snakeR.head[0]);
-        bd = sendto(sock,msg,lg,0,&sin,taille);
-
-        int sinsize = sizeof(csin);
-        bd= recvfrom(sock, msg1, lg, 0, (SOCKADDR *)&csin, &sinsize);
-        messageClient = msg1[0]-48;
-        carte.snakeV.head[0] = msg1[0]-48;
-
         }
+
+        bd = sendto(sock,&carte.snakeR.head[0],lg,0,&sin,taille);
+
+        sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
+
+        sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.positionFruit[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
+
+        sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.positionFruit[1], lg, 0, (SOCKADDR *)&csin, &sinsize);
+
+        carte.plateau[carte.positionFruit[0]][carte.positionFruit[1]]=FRUIT;
+        carte.fruit=1;
 
         if(my_rand(100)>50)//en cas de conflit, on tire au sort !
         {
@@ -220,11 +228,6 @@ void jouerClient(SDL_Surface* ecran)
             teteActuelleV = teteV[carte.snakeV.head[0]];
             deplacerV(&carte);
             queueActuelleV = queueV[carte.snakeV.tail[0]];
-        }
-
-        if(carte.fruit<1)
-        {
-            placer_fruit(&carte);
         }
 
         position.x = 0;
@@ -291,14 +294,14 @@ void jouerClient(SDL_Surface* ecran)
                 }
             }
         }
-        sprintf(texteScoreV,"VERT : %d",messageClient);//carte.snakeV.length);//dijkstratab[1][28][1]);//carte.snakeV.length);//
+        sprintf(texteScoreV,"VERT : %d",carte.snakeV.length);//messageClient);//dijkstratab[1][28][1]);//
         scoreV = TTF_RenderText_Blended(police,texteScoreV,couleurOr);
-        position.x = 32;
+        position.x = 64;
         position.y = 0;
         SDL_BlitSurface(scoreV, NULL, ecran, &position);
-        sprintf(texteScoreR,"ROUGE : %d",carte.snakeR.length);
+        sprintf(texteScoreR,"RED : %d",carte.snakeR.length);
         scoreR = TTF_RenderText_Blended(police,texteScoreR,couleurOr);
-        position.x = 768;
+        position.x = 800;
         position.y = 0;
         SDL_BlitSurface(scoreR, NULL, ecran, &position);
         SDL_Flip(ecran);
@@ -317,10 +320,7 @@ void jouerClient(SDL_Surface* ecran)
     SDL_FreeSurface(fond);
     SDL_FreeSurface(mur);
     SDL_FreeSurface(fruit);
-    /*free(carte.plateau);
-    free(carte.adjtab);
-    free(carte.snakeV.body);
-    free(carte.snakeR.body);*/
+    free(&carte);
 
     closesocket(sock);
     WSACleanup();

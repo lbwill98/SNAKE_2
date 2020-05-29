@@ -12,6 +12,7 @@
 enum {HAUT,BAS,GAUCHE,DROITE,VIRAGEHG,VIRAGEHD,VIRAGEBG,VIRAGEBD};//direction
 enum {VIDE,MUR,TETEV,CORPV,QUEUEV,TETER,CORPR,QUEUER,FRUIT};//type de surface
 
+
 typedef struct
 {
     int length;
@@ -27,11 +28,13 @@ typedef struct
     int lignes;
     int colonnes;
     int fruit;
+    int positionFruit[2];
+    int speed;
     Snake snakeV;
     Snake snakeR;
 } Carte;
 
-void initCarte(Carte *carte, char * fichier);
+void initCarte(Carte *carte, char * fichier, int speed);
 void placer_fruit(Carte *carte);
 int my_rand (int maximum);
 

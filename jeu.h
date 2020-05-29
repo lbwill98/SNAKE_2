@@ -13,9 +13,9 @@
 
 
 
-void jouer(SDL_Surface* ecran);
-void jouerServeur(SDL_Surface* ecran);
-void jouerClient(SDL_Surface* ecran);
+void jouer(SDL_Surface* ecran, int speed);
+void jouerServeur(SDL_Surface* ecran, int speed);
+void jouerClient(SDL_Surface* ecran, int speed);
 void deplacerV(Carte *carte);
 void ajouterCorpV(Carte *carte);
 void avancerCorpV(Carte *carte);
