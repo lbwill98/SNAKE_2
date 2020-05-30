@@ -14,16 +14,18 @@
 
 #include "jeu.h"
 
-int messageClient = -1;
+
 void jouerClient(SDL_Surface* ecran, int speed)
 {
+    int messageClient = 1;
     WSADATA WSAData;
     int taille,bd,lg=10;
+    int sinsize;
     SOCKET sock;
     SOCKADDR_IN  sin; //adresse internet locale
     SOCKADDR_IN csin; //pointeur vers adresse internet expediteur (recuperée de l'entete paquet UDP recu)
     char *name = "localhost";
-    char *adr_serv="127.0.0.1";//"192.168.1.16";
+    char *adr_serv="127.0.0.1";//"192.168.1.24";//
 
     struct hostent *host;
 
@@ -136,10 +138,41 @@ void jouerClient(SDL_Surface* ecran, int speed)
 
 
 
+    /*carte.jouer=0;
+    clock_t start_time = clock();
+    while (clock() < start_time + 10000)
+    {
+        bd = sendto(sock, &messageClient, lg, 0, (SOCKADDR *)&csin, taille);
+        if(bd>=0)
+        {
+            carte.jouer=1;
+            break;
+        }
+    }*/
 
+    /*bd = sendto(sock, &carte.jouer, lg, 0, (SOCKADDR *)&csin, taille);
+    sinsize = sizeof(csin);
 
-    int sinsize = sizeof(csin);
+    carte.jouer=0;
+    clock_t start_time = clock();
+    while (clock() < start_time + 3000 )
+    {
+        sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.speed, lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd>0)
+        {
+            carte.jouer=1;
+            break;
+        }
+    }*/
+
+    carte.speed=-1;
+    sinsize = sizeof(csin);
     bd= recvfrom(sock, &carte.speed, lg, 0, (SOCKADDR *)&csin, &sinsize);
+    /*if(carte.speed<0)
+        {
+            carte.jouer=0;
+        }*/
     while(carte.jouer==1)
     {
         carte.snakeV.head[3]=carte.snakeV.head[0];
@@ -152,14 +185,14 @@ void jouerClient(SDL_Surface* ecran, int speed)
             switch(event.type)
             {
             case SDL_QUIT:
-                carte.jouer=0;
+                //carte.jouer=0;
                 break;
 
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym)
                 {
                 case SDLK_ESCAPE:
-                    carte.jouer = 0;
+                    //carte.jouer = 0;
                     break;
 
                 case SDLK_SPACE:
@@ -201,12 +234,15 @@ void jouerClient(SDL_Surface* ecran, int speed)
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd<0){carte.jouer=0;break;}
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.positionFruit[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd<0){carte.jouer=0;break;}
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.positionFruit[1], lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd<0){carte.jouer=0;break;}
 
         carte.plateau[carte.positionFruit[0]][carte.positionFruit[1]]=FRUIT;
         carte.fruit=1;

@@ -14,12 +14,14 @@
 
 #include "jeu.h"
 
-int messageServeur = -1;
+
 
 void jouerServeur(SDL_Surface* ecran, int speed)
 {
+    int messageServeur = 1;
     WSADATA WSAData;
     int taille,bd,lg=10;
+    int sinsize;
     SOCKET sock;
     SOCKADDR_IN sin;
     SOCKADDR_IN csin;
@@ -110,7 +112,39 @@ void jouerServeur(SDL_Surface* ecran, int speed)
     mur = IMG_Load("mur.png");
     fruit = IMG_Load("fruitOr.png");
 
+    /*carte.jouer=0;
+    clock_t start_time = clock();
+    while (clock() < start_time + 10000)
+    {
+        int sinsize = sizeof(csin);
+        bd= recvfrom(sock, &messageServeur, lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd>=0)
+        {
+            carte.jouer=1;
+            break;
+        }
+    }*/
+    /*sinsize = sizeof(csin);
+    bd= recvfrom(sock, &carte.jouer, lg, 0, (SOCKADDR *)&csin, &sinsize);
+
+
+    carte.jouer=0;
+    clock_t start_time = clock();
+    while (clock() < start_time + 3000)
+    {
+        bd = sendto(sock, &carte.speed, lg, 0, (SOCKADDR *)&csin, taille);
+        if(bd>0)
+        {
+            carte.jouer=1;
+            break;
+        }
+    }*/
+
     bd = sendto(sock, &carte.speed, lg, 0, (SOCKADDR *)&csin, taille);
+    /*if(bd<0)
+        {
+            //carte.jouer=0;
+        }*/
     while(carte.jouer==1)
     {
         carte.snakeV.head[3]=carte.snakeV.head[0];
@@ -168,8 +202,10 @@ void jouerServeur(SDL_Surface* ecran, int speed)
             }
         }
 
-        int sinsize = sizeof(csin);
+
+        sinsize = sizeof(csin);
         bd = recvfrom(sock,&carte.snakeR.head[0],lg,0, (SOCKADDR *)&csin, &sinsize);
+        if(bd<0){carte.jouer=0;break;}
 
         bd = sendto(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, taille);
 

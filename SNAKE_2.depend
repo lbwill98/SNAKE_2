@@ -268,7 +268,7 @@
 	<stdio.h>
 	"ia.h"
 
-1590779366 source:c:\users\william\c_projet\snake_2\serveur.c
+1590880467 source:c:\users\william\c_projet\snake_2\serveur.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
@@ -280,7 +280,7 @@
 	<string.h>
 	"jeu.h"
 
-1590779366 source:c:\users\william\c_projet\snake_2\client.c
+1590879080 source:c:\users\william\c_projet\snake_2\client.c
 	<stdlib.h>
 	<stdio.h>
 	<SDL/SDL.h>
