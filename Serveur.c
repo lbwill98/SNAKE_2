@@ -36,7 +36,7 @@ void jouerServeur(SDL_Surface* ecran, int speed)
     taille = sizeof(sin);
 
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM //
+    initCarte(&carte,"ENSEM.txt", speed); //plateauB20X30 //I_LOVE_ENSEM //
 
     SDL_Rect position;
     SDL_Event event;
