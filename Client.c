@@ -25,7 +25,10 @@ void jouerClient(SDL_Surface* ecran, int speed)
     SOCKADDR_IN  sin; //adresse internet locale
     SOCKADDR_IN csin; //pointeur vers adresse internet expediteur (recuperée de l'entete paquet UDP recu)
     char *name = "localhost";
-    char *adr_serv="127.0.0.1";//"192.168.1.24";//
+    FILE *fd = fopen("adresseIP.txt","r");
+    char adr_serv[13];//;="127.0.0.1";//"192.168.1.24";//
+    fgets(&adr_serv,13,fd);
+    fclose(fd);
 
     struct hostent *host;
 
@@ -60,8 +63,7 @@ void jouerClient(SDL_Surface* ecran, int speed)
 
 
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
-
+    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM
     SDL_Rect position;
     SDL_Event event;
 
@@ -234,15 +236,27 @@ void jouerClient(SDL_Surface* ecran, int speed)
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
-        if(bd<0){carte.jouer=0;break;}
+        if(bd<0)
+        {
+            carte.jouer=0;
+            break;
+        }
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.positionFruit[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
-        if(bd<0){carte.jouer=0;break;}
+        if(bd<0)
+        {
+            carte.jouer=0;
+            break;
+        }
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.positionFruit[1], lg, 0, (SOCKADDR *)&csin, &sinsize);
-        if(bd<0){carte.jouer=0;break;}
+        if(bd<0)
+        {
+            carte.jouer=0;
+            break;
+        }
 
         carte.plateau[carte.positionFruit[0]][carte.positionFruit[1]]=FRUIT;
         carte.fruit=1;

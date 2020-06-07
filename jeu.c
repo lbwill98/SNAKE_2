@@ -8,12 +8,10 @@
 
 #include "jeu.h"
 
-int message=0;
-
 void jouer(SDL_Surface* ecran, int speed)
 {
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM
+    initCarte(&carte,"ENSEM2.txt", speed); //plateauB20X30 //I_LOVE_ENSEM
 
     SDL_Rect position;
     SDL_Event event;
@@ -280,6 +278,7 @@ void jouer(SDL_Surface* ecran, int speed)
         SDL_Flip(ecran);
     }
 
+    maj_score(&carte);
     for(int i=0; i<4; i++)
     {
         SDL_FreeSurface(teteV[i]);
@@ -311,7 +310,7 @@ void deplacerV(Carte *carte)
         }
         if(carte->plateau[carte->snakeV.head[1]-1][carte->snakeV.head[2]]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerQueueV(carte);
@@ -330,7 +329,7 @@ void deplacerV(Carte *carte)
         }
         if(carte->plateau[carte->snakeV.head[1]+1][carte->snakeV.head[2]]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerQueueV(carte);
@@ -349,7 +348,7 @@ void deplacerV(Carte *carte)
         }
         if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]-1]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerQueueV(carte);
@@ -368,7 +367,7 @@ void deplacerV(Carte *carte)
         }
         if(carte->plateau[carte->snakeV.head[1]][carte->snakeV.head[2]+1]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerQueueV(carte);
@@ -572,7 +571,7 @@ void deplacerR(Carte *carte)
         }
         if(carte->plateau[carte->snakeR.head[1]-1][carte->snakeR.head[2]]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerqueueR(carte);
@@ -591,7 +590,7 @@ void deplacerR(Carte *carte)
         }
         if(carte->plateau[carte->snakeR.head[1]+1][carte->snakeR.head[2]]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerqueueR(carte);
@@ -610,7 +609,7 @@ void deplacerR(Carte *carte)
         }
         if(carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]-1]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerqueueR(carte);
@@ -629,7 +628,7 @@ void deplacerR(Carte *carte)
         }
         if(carte->plateau[carte->snakeR.head[1]][carte->snakeR.head[2]+1]!=VIDE)//ou queue a ajouter
         {
-            //carte.jouer =0;
+            //carte->jouer =0;
             break;
         }
         avancerqueueR(carte);

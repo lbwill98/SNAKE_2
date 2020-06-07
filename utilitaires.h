@@ -37,5 +37,6 @@ typedef struct
 void initCarte(Carte *carte, char * fichier, int speed);
 void placer_fruit(Carte *carte);
 int my_rand (int maximum);
+void maj_score(Carte *carte);
 
 #endif // UTILITAIRES_H_INCLUDED

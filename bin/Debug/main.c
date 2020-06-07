@@ -75,21 +75,21 @@ int main(int argc, char *argv[])
 
             case SDLK_1:
                 jouer(ecran, speed);
-                SDL_Delay(300);
+                SDL_Delay(300+speed);
                 i=0;
                 Mix_PlayMusic(musique, -1);
                 break;
 
             case SDLK_2:
                 jouerServeur(ecran, speed);
-                SDL_Delay(300);
+                SDL_Delay(300+speed);
                 i=0;
                 Mix_PlayMusic(musique, -1);
                 break;
 
             case SDLK_3:
                 jouerClient(ecran, speed);
-                SDL_Delay(300);
+                SDL_Delay(300+speed);
                 i=0;
                 Mix_PlayMusic(musique, -1);
                 break;
@@ -114,49 +114,101 @@ int main(int argc, char *argv[])
                 while(continuerSettings)
                 {
                     SDL_WaitEvent(&eventSettings);
-                switch(eventSettings.type)
-                {
-                case SDL_QUIT:
-                    SDL_Delay(200);
-                    continuerSettings = 0;
-                    break;
-
-                case SDL_KEYDOWN:
-                    switch(eventSettings.key.keysym.sym)
+                    switch(eventSettings.type)
                     {
-                    case SDLK_ESCAPE:
+                    case SDL_QUIT:
+                        SDL_Delay(300+speed);
                         continuerSettings = 0;
                         break;
 
-                    case SDLK_1:
-                        continuerSettings = 0;
-                        speed = 160;
-                        break;
+                    case SDL_KEYDOWN:
+                        switch(eventSettings.key.keysym.sym)
+                        {
+                        case SDLK_ESCAPE:
+                            continuerSettings = 0;
+                            break;
 
-                    case SDLK_2:
-                        continuerSettings = 0;
-                        speed = 130;
-                        break;
+                        case SDLK_1:
+                            continuerSettings = 0;
+                            speed = 160;
+                            break;
 
-                    case SDLK_3:
-                        continuerSettings = 0;
-                        speed = 100;
-                        break;
+                        case SDLK_2:
+                            continuerSettings = 0;
+                            speed = 130;
+                            break;
 
-                    case SDLK_4:
-                        continuerSettings = 0;
-                        speed = 70;
-                        break;
+                        case SDLK_3:
+                            continuerSettings = 0;
+                            speed = 100;
+                            break;
 
-                    case SDLK_5:
-                        continuerSettings = 0;
-                        speed = 40;
+                        case SDLK_4:
+                            continuerSettings = 0;
+                            speed = 70;
+                            break;
+
+                        case SDLK_5:
+                            continuerSettings = 0;
+                            speed = 40;
+                            break;
+                        }
                         break;
                     }
-                    break;
                 }
+                SDL_Delay(300+speed);
+                i=0;
+                break;
+
+                case SDLK_5:
+                positionMenu.x=0;
+                positionMenu.y=0;
+                SDL_BlitSurface(black, NULL, ecran, &positionMenu);
+                texte = TTF_RenderText_Blended(police1,"SCORES",couleurOr);
+                positionMenu.x = 390;
+                positionMenu.y = 30;
+                SDL_BlitSurface(texte, NULL, ecran, &positionMenu);
+                positionMenu.y = 120;
+
+                FILE *fd = fopen("sauvegardes.txt","r");
+                char pseudo[100];
+                int score;
+                char pseudoR[100];
+                int scoreR;
+                char date[100];
+                char res[100];
+                for(int i=0;i<10;i++){
+                    fscanf(fd,"%s          %d          %s          %d          %s",&pseudo,&score,&pseudoR,&scoreR,&date);
+                    sprintf(res,"%s : %d          %s : %d          %s",&pseudo,score,&pseudoR,scoreR,&date);
+                    texte = TTF_RenderText_Blended(police2,res,couleurOr);
+                    positionMenu.x = 150;
+                    positionMenu.y += 40;
+                    SDL_BlitSurface(texte, NULL, ecran, &positionMenu);
+
                 }
-                SDL_Delay(300);
+                SDL_Flip(ecran);
+                fclose(fd);
+                while(continuerSettings)
+                {
+                    SDL_WaitEvent(&eventSettings);
+                    switch(eventSettings.type)
+                    {
+                    case SDL_QUIT:
+                        SDL_Delay(400+speed);
+                        continuerSettings = 0;
+                        break;
+
+                    case SDL_KEYDOWN:
+                        switch(eventSettings.key.keysym.sym)
+                        {
+                        case SDLK_ESCAPE:
+                            continuerSettings = 0;
+                            break;
+                        }
+                        break;
+                    }
+                }
+                SDL_Delay(300+speed);
                 i=0;
                 break;
             }
@@ -172,13 +224,13 @@ int main(int argc, char *argv[])
         SDL_BlitSurface(texte, NULL, ecran, &positionMenu);
 
         if(i<26)
-           {
+        {
             texte = TTF_RenderText_Blended(police3,"press a key",couleurOr);
-           }
-           else
-           {
-               texte = TTF_RenderText_Blended(police3,"press a key",couleurNoir);
-           }
+        }
+        else
+        {
+            texte = TTF_RenderText_Blended(police3,"press a key",couleurNoir);
+        }
         positionMenu.x = 375;
         positionMenu.y = 110;
         SDL_BlitSurface(texte, NULL, ecran, &positionMenu);
@@ -203,8 +255,8 @@ int main(int argc, char *argv[])
         positionMenu.y = 450;
         SDL_BlitSurface(texte, NULL, ecran, &positionMenu);
 
-        texte = TTF_RenderText_Blended(police2,"select map : 5",couleurOr);
-        positionMenu.x = 390;
+        texte = TTF_RenderText_Blended(police2,"scores : 5",couleurOr);
+        positionMenu.x = 420;
         positionMenu.y = 500;
         SDL_BlitSurface(texte, NULL, ecran, &positionMenu);
 

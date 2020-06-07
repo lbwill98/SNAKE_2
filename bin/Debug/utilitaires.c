@@ -194,3 +194,55 @@ int my_rand (int maximum)
     }
     return (res);
 }
+
+void maj_score(Carte *carte)
+{
+    FILE *fd = fopen("sauvegardes.txt","r");
+    FILE *fd2 = fopen("copie.txt","w+");
+    int placer = 0;
+    char datec[100];
+    char date[100];
+    time_t rawtime;
+    struct tm * timeinfo;
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    strftime(date,30,"%d/%m/%Y___%H:%M",timeinfo);
+    char pseudoc[100];
+    char pseudo[]="green";
+    char pseudoR[]="red";
+    int scorec=-1;
+    int scorecR=-1;
+    while(!feof(fd))
+    {
+        fscanf(fd,"%s          %d          %s          %d          %s",&pseudoc,&scorec,&pseudoR,&scorecR,&datec);
+        if(carte->snakeV.length>=scorec && !placer && scorec!=-1)
+        {
+            fprintf(fd2,"%s          %d          %s          %d          %s\n",pseudo,carte->snakeV.length,pseudoR,carte->snakeR.length,date);
+            placer = 1;
+
+        }
+        if(!feof(fd))
+        {
+            fprintf(fd2,"%s          %d          %s          %d          %s\n",pseudoc,scorec,pseudoR,scorecR,datec);
+        }
+        if(scorec != -1 && feof(fd))
+        {
+            fprintf(fd2,"%s          %d          %s          %d          %s",pseudoc,scorec,pseudoR,scorecR,datec);
+        }
+    }
+    if(!placer && scorec !=-1)
+    {
+        fprintf(fd2,"\n%s          %d          %s          %d          %s",pseudo,carte->snakeV.length,pseudoR,carte->snakeR.length,date);
+        placer = 1;
+    }
+    if(scorec == -1)// si le ficier est vide, donc pas de parours de boucle, donc scores reste à -1
+    {
+        fprintf(fd2,"%s          %d          %s          %d          %s",pseudo,carte->snakeV.length,pseudoR,carte->snakeR.length,date);
+    }
+    fclose(fd);
+    fclose(fd2);
+    remove("sauvegardes.txt");
+    rename("copie.txt","sauvegardes.txt");
+}
+
+

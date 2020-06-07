@@ -36,7 +36,7 @@ void jouerServeur(SDL_Surface* ecran, int speed)
     taille = sizeof(sin);
 
     Carte carte;
-    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM //MATIS//ez //allan
+    initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM //
 
     SDL_Rect position;
     SDL_Event event;
@@ -205,7 +205,11 @@ void jouerServeur(SDL_Surface* ecran, int speed)
 
         sinsize = sizeof(csin);
         bd = recvfrom(sock,&carte.snakeR.head[0],lg,0, (SOCKADDR *)&csin, &sinsize);
-        if(bd<0){carte.jouer=0;break;}
+        if(bd<0)
+        {
+            carte.jouer=0;
+            break;
+        }
 
         bd = sendto(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, taille);
 

@@ -14,9 +14,54 @@
 
 #include "jeu.h"
 
-int messageClient = -1;
+
 void jouerClient(SDL_Surface* ecran, int speed)
 {
+    int messageClient = 1;
+    WSADATA WSAData;
+    int taille,bd,lg=10;
+    int sinsize;
+    SOCKET sock;
+    SOCKADDR_IN  sin; //adresse internet locale
+    SOCKADDR_IN csin; //pointeur vers adresse internet expediteur (recuperée de l'entete paquet UDP recu)
+    char *name = "localhost";
+    FILE *fd = fopen("IP.txt","r");
+    char *adr_serv;//;="127.0.0.1";//"192.168.1.24";//
+    fscanf(fd,"%s",adr_serv);
+    fclose(fd);
+
+    struct hostent *host;
+
+    /* RAPPEL de struct hostent, definie dans netdb.h
+    struct  hostent {
+    	char    *h_name;        // official name of host
+    	char    **h_aliases;    // alias list
+    	int     h_addrtype;     // host address type
+    	int     h_length;       // length of address
+    	char    **h_addr_list;  // list of addresses from name server
+    };
+    */
+    WSAStartup(MAKEWORD(2,0), &WSAData);
+    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    printf("le socket est identifie par : %d \n",sock);
+
+    taille = sizeof(sin);
+
+// Avec le DNS, on obtient l'adresse ip par gethostbyname()
+    if ((host = gethostbyname(name))==NULL)
+    {
+        perror("Nom de machine");
+        exit(2);
+    };
+    memcpy (host -> h_addr_list[0], &sin.sin_addr,host -> h_length);
+
+// si on connait l'adresse ip de destination en chiffre, on peut l'affecter directement:
+    //un_entier=inet_aton(adr_serv, &padin.sin_addr);
+    sin.sin_addr.s_addr = inet_addr(adr_serv);
+    sin.sin_family = AF_INET;
+    sin.sin_port   = htons(LEPORT);
+
+
     Carte carte;
     initCarte(&carte,"plateauB20X30.txt", speed); //plateauB20X30 //I_LOVE_ENSEM                                                              //MATIS                                                         //ez //allan
 
@@ -95,46 +140,42 @@ void jouerClient(SDL_Surface* ecran, int speed)
     fruit = IMG_Load("fruitOr.png");
 
 
-    WSADATA WSAData;
-    int taille,bd,lg=10;
-    SOCKET sock;
-    SOCKADDR_IN  sin; //adresse internet locale
-    SOCKADDR_IN csin; //pointeur vers adresse internet expediteur (recuperée de l'entete paquet UDP recu)
-    char *name = "localhost";
-    char *adr_serv="127.0.0.1";//"192.168.1.16";
 
-    struct hostent *host;
-
-    /* RAPPEL de struct hostent, definie dans netdb.h
-    struct  hostent {
-    	char    *h_name;        // official name of host
-    	char    **h_aliases;    // alias list
-    	int     h_addrtype;     // host address type
-    	int     h_length;       // length of address
-    	char    **h_addr_list;  // list of addresses from name server
-    };
-    */
-    WSAStartup(MAKEWORD(2,0), &WSAData);
-    sock = socket(AF_INET, SOCK_DGRAM, 0);
-    printf("le socket est identifie par : %d \n",sock);
-
-    taille = sizeof(sin);
-
-// Avec le DNS, on obtient l'adresse ip par gethostbyname()
-    if ((host = gethostbyname(name))==NULL)
+    /*carte.jouer=0;
+    clock_t start_time = clock();
+    while (clock() < start_time + 10000)
     {
-        perror("Nom de machine");
-        exit(2);
-    };
-    memcpy (host -> h_addr_list[0], &sin.sin_addr,host -> h_length);
+        bd = sendto(sock, &messageClient, lg, 0, (SOCKADDR *)&csin, taille);
+        if(bd>=0)
+        {
+            carte.jouer=1;
+            break;
+        }
+    }*/
 
-// si on connait l'adresse ip de destination en chiffre, on peut l'affecter directement:
-    //un_entier=inet_aton(adr_serv, &padin.sin_addr);
-    sin.sin_addr.s_addr = inet_addr(adr_serv);
-    sin.sin_family = AF_INET;
-    sin.sin_port   = htons(LEPORT);
+    /*bd = sendto(sock, &carte.jouer, lg, 0, (SOCKADDR *)&csin, taille);
+    sinsize = sizeof(csin);
 
+    carte.jouer=0;
+    clock_t start_time = clock();
+    while (clock() < start_time + 3000 )
+    {
+        sinsize = sizeof(csin);
+        bd= recvfrom(sock, &carte.speed, lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd>0)
+        {
+            carte.jouer=1;
+            break;
+        }
+    }*/
 
+    carte.speed=-1;
+    sinsize = sizeof(csin);
+    bd= recvfrom(sock, &carte.speed, lg, 0, (SOCKADDR *)&csin, &sinsize);
+    /*if(carte.speed<0)
+        {
+            carte.jouer=0;
+        }*/
     while(carte.jouer==1)
     {
         carte.snakeV.head[3]=carte.snakeV.head[0];
@@ -147,14 +188,14 @@ void jouerClient(SDL_Surface* ecran, int speed)
             switch(event.type)
             {
             case SDL_QUIT:
-                carte.jouer=0;
+                //carte.jouer=0;
                 break;
 
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym)
                 {
                 case SDLK_ESCAPE:
-                    carte.jouer = 0;
+                    //carte.jouer = 0;
                     break;
 
                 case SDLK_SPACE:
@@ -194,14 +235,17 @@ void jouerClient(SDL_Surface* ecran, int speed)
 
         bd = sendto(sock,&carte.snakeR.head[0],lg,0,&sin,taille);
 
-        int sinsize = sizeof(csin);
+        sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.snakeV.head[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd<0){carte.jouer=0;break;}
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.positionFruit[0], lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd<0){carte.jouer=0;break;}
 
         sinsize = sizeof(csin);
         bd= recvfrom(sock, &carte.positionFruit[1], lg, 0, (SOCKADDR *)&csin, &sinsize);
+        if(bd<0){carte.jouer=0;break;}
 
         carte.plateau[carte.positionFruit[0]][carte.positionFruit[1]]=FRUIT;
         carte.fruit=1;

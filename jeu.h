@@ -11,8 +11,6 @@
 
 #include "ia.h"
 
-
-
 void jouer(SDL_Surface* ecran, int speed);
 void jouerServeur(SDL_Surface* ecran, int speed);
 void jouerClient(SDL_Surface* ecran, int speed);
